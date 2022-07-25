@@ -1,0 +1,43 @@
+{
+  "name": "clearconnect-api",
+  "version": "1.0.0",
+  "description": "api for clearconnect",
+  "main": "api.js",
+  "scripts": {
+    "dev": "pm2-dev api.js",
+    "start": "node api.js"
+  },
+  "engines": {
+    "node": "^14 || ^16"
+  },
+  "dependencies": {
+    "app-root-path": "^3.0.0",
+    "aws-sdk": "^2.1103.0",
+    "axios": "^0.26.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.2",
+    "chalk": "2.4.1",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-http-context": "^1.2.4",
+    "glob": "^7.2.0",
+    "helmet": "^5.0.2",
+    "i18n": "^0.14.2",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "mime": "^3.0.0",
+    "moment": "^2.29.1",
+    "mongoose": "^6.2.4",
+    "mongoose-sequence": "^5.3.1",
+    "morgan": "^1.10.0",
+    "pm2": "^5.2.0",
+    "process": "^0.11.10",
+    "terminal-kit": "^2.4.0",
+    "uuid": "^8.3.2",
+    "validator": "^13.7.0",
+    "winston": "^3.6.0",
+    "winston-daily-rotate-file": "^4.6.1"
+  }
+}
