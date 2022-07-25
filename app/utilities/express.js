@@ -1,7 +1,6 @@
 const httpContext = require("express-http-context");
 
 const apiMiddleware = require('./api-middleware');
-const domainMiddelware = require('../middlewares/domain-middleware');
 
 const logger = require('./logger');
 
@@ -21,7 +20,7 @@ module.exports.Service = class Service {
     constructor(name) {
         this.name = name;
         this.method = 'get';
-        this.middlewares = [httpContext.middleware, domainMiddelware];
+        this.middlewares = [];
         this.public = false;
     }
 
@@ -51,7 +50,7 @@ module.exports.Service = class Service {
     }
 
     respondsAt(route) {
-        this.route = `/domain/:domain${route}`;
+        this.route = route;
         return this;
     }
 

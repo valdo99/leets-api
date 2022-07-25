@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
-// const moment = require("moment");
 const validator = require("validator");
-const httpContext = require("express-http-context");
 
 
 const authenticationCapable = require("../plugins/authentication-capable-plugin");
@@ -25,18 +23,19 @@ const UserSchema = new mongoose.Schema(
             minLength: [1, i18n.__("STRING_AT_LEAST", {min: 1})],
             maxLength: [50, i18n.__("STRING_AT_MUST", {max: 50})],
         },
-        phoneNumber:{
-            type: String,
-        },
         email: {
             type: String,
             lowercase: true,
+            unique: true,
+            sparse: true,
             trim: true,
             validate: [validator.isEmail, i18n.__("FORM_ERROR_INVALID_EMAIL")],
         },
-        domain:{
+        username:{
             type:String,
             required: [true, i18n.__("FIELD_REQUIRED")],
+            unique: true,
+            sparse: true,
         },
         isAdmin: {
             type: Boolean,
@@ -63,41 +62,12 @@ UserSchema.plugin(publicFields, [
     "surname",
     "email",
     "isAdmin",
-
+    "username"
 ]);
 
 UserSchema.plugin(authenticationCapable);
 
 UserSchema.plugin(mongooseErrors);
 
-UserSchema.pre('validation', function (next) {
-    const {req} = httpContext.get('context');
-    this.domain = req.locals.domain.name;
-    next();
-});
-
-UserSchema.pre('save', function (next) {
-    const {req} = httpContext.get('context');
-    this.domain = req.locals.domain.name;
-    next();
-});
-
-UserSchema.pre('find', function (next) {
-    const {req} = httpContext.get('context');
-    this.domain = req.locals.domain.name;
-    next();
-});
-
-UserSchema.pre('findOne', function (next) {
-    const {req} = httpContext.get('context');
-    this.domain = req.locals.domain.name;
-    next();
-});
-
-UserSchema.pre('findOneAndDelete', function (next) {
-    const {req} = httpContext.get('context');
-    this.domain = req.locals.domain.name;
-    next();
-});
 
 module.exports = exports = mongoose.model("User", UserSchema);

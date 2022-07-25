@@ -1,7 +1,7 @@
 {
-  "name": "clearconnect-api",
+  "name": "lits-api",
   "version": "1.0.0",
-  "description": "api for clearconnect",
+  "description": "api for lits",
   "main": "api.js",
   "scripts": {
     "dev": "pm2-dev api.js",
@@ -30,6 +30,7 @@
     "mime": "^3.0.0",
     "moment": "^2.29.1",
     "mongoose": "^6.2.4",
+    "mongoose-likes": "^0.1.0",
     "mongoose-sequence": "^5.3.1",
     "morgan": "^1.10.0",
     "pm2": "^5.2.0",

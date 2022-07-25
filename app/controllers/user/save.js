@@ -14,20 +14,20 @@ new utilities.express.Service(tagLabel)
     .respondsAt('/users')
     .controller(async (req, res) => {
 
-        const {name, surname, email, password, repeatPassword, terms} = req.body;
+        const {name, surname, email, username, password, repeatPassword, terms} = req.body;
 
 
         if (terms !== true )
             return res.badRequest({terms: i18n.__('MISSING_CONSENSUS')});
 
-        if (await Users.findOne({email, domain:req.locals.domain.name}))
+        if (await Users.findOne({email}))
             return res.forbidden(i18n.__("FORM_ERROR_EMAIL_IN_USE"));
 
         const user = new Users({
             name,
             surname,
             email,
-            domain:req.locals.domain.name
+            username
         });
 
         if (!(await user.isPasswordCompliant(password))) {

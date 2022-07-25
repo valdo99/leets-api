@@ -17,7 +17,6 @@ new utilities.express.Service(tagLabel)
             email: email.toLowerCase(),
             'emailConfirmation.confirmed': false,
             'emailConfirmation.otp': req.body.otp,
-            domain:req.locals.domain.name
         });
 
         if (!user)

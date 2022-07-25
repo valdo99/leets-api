@@ -25,7 +25,7 @@ module.exports = async (req, res, next) => {
             return res.unauthorized();
         }
 
-        const query = { _id: decodedUser._id, domain: req.params.domain };
+        const query = { _id: decodedUser._id};
 
         const user = await Users.findOne(query);
 
