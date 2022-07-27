@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const Post = mongoose.model("Post");
-const User = mongoose.model("User");
 const Artist = mongoose.model("Artist");
-const axios = require("axios")
+const AccessToken = mongoose.model("AccessToken");
+const axios = require("axios");
+const moment = require('moment');
 
 const tagLabel = "uploadSpotifyLinkProtectedController";
 
@@ -24,10 +25,16 @@ var authOptions = {
     json: true,
   };
 
-// TODO save token to db
-//      for each call, look if token has expired
-//      if not use the stored one, else create new token
+
 const getToken = async () => {
+        const token = await AccessToken.findOne({
+          validTill: { $gte: moment().subtract(6,'seconds').toISOString()}
+        })
+
+        if(token){
+          return token.token
+        }
+
         const res = await axios({
             url:authOptions.url,
             method:"POST",
@@ -35,6 +42,13 @@ const getToken = async () => {
             headers:authOptions.headers
         })
 
+        const newAccessToken = new AccessToken({
+          token: res.data.access_token,
+          type: res.data.token_type,
+          validTill: moment().add(res.data.expires_in,'seconds').toISOString()
+        })
+
+        await newAccessToken.save()
         return res.data.access_token;
 }
 
@@ -76,18 +90,54 @@ new utilities.express.Service(tagLabel)
 
        const {name: title, preview_url, artists, album} = await getTrackData({id,token})
 
-       const artistData = await getArtistData({id:artists[0].id, token});
-       const image = album.images[0].url 
+       const {
+        id:artistId,
+        images:artistImages,
+        name:artistName,
+        followers: artistFollowers
+       } = await getArtistData({id:artists[0].id, token});
 
-       //TODO check if artist is in DB
+       const postImage = album.images[0].url 
 
-       // IF NOT save artist in db
+
+       //TODO check the followers of the artist and if it's too popular
+       //     return a forbidden error
+
+       let artist;
+
+       artist = await Artist.findOne({spotify_id:artistId});
+
+
+       if(!artist){
+          artist = new Artist({
+            name: artistName,
+            image: artistImages[0].url,
+            followers: artistFollowers.total,
+            spotify_id: artistId,
+            // hunter: req.locals.user._id
+          })
+          await artist.save()
+       }
+
+       // if the artist exists do we need to block the user to post the track?
 
        // create new Post
+       const existingPost = await Post.findOne({spotify_id:id})
 
-       
+       if(existingPost){
+        return res.forbidden("Post already exists")
+       }
 
-       res.resolve({
-        artistData
+       const newPost = new Post({
+        title,
+        image: postImage,
+        preview_url,
+        spotify_id: id,
+        // hunter: req.locals.user._id,
+        artist: artist._id.toString()
        })
+       
+       await newPost.save()
+
+       res.resolve(newPost)
     });

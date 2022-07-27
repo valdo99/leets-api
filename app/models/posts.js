@@ -31,7 +31,7 @@ const PostSchema = new mongoose.Schema(
         status:{
             type:String,
             enum:["UPLOADED","ACTIVE","REFUSED"],
-            default:"UPLAODED"
+            default:"UPLOADED"
         }
        
     },
@@ -65,9 +65,10 @@ PostSchema.plugin(likesPlugin, {
 
 PostSchema.plugin(publicFields, [
     "_id",
+    "title",
     "spotify_id",
     "hunter",
-    "name",
+    "artist",
     "image",
     "followers",
     "likes",

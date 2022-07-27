@@ -22,13 +22,35 @@ module.exports= (schema, options = {}) => {
         hashPassword:{
             type:String,
         },
-        didResetFirstPassword: {
-            type: Number,
+        resetPassword: {
+            otp: {
+                type: String,
+                select: false
+            },
+            validTill: {
+                type: Date,
+                select: false
+            },
+            createdAt: {
+                type: Date,
+                select: false
+            },
+            remainingAttempts: {
+                type: Number,
+                select: false
+            }
+        },
+        isAdmin: {
+            type: Boolean,
             default: false
+        },
+        emailConfirmation: {
+            confirmed: { type: Boolean, default: false },
+            notificationSentDate: { type: Date },
+            otp: { type: String }
         }
 
     });
-
     schema.methods.isPasswordCompliant = (password) => {
         return !!password.match(PASSWORD_REGEX);
     };
@@ -42,11 +64,13 @@ module.exports= (schema, options = {}) => {
     schema.methods.isPasswordValid = async function (rawPassword) {
 
         if (!rawPassword) return false;
+
         return await bcrypt.compare(rawPassword, this.hashPassword);
 
     };
 
     schema.methods.login = async function (rawPassword, hashPassword) {
+
 
         if (!rawPassword)
             return Promise.reject("The user is missing the password");
@@ -56,6 +80,7 @@ module.exports= (schema, options = {}) => {
         if (!validLogin) {
             return Promise.reject(new ForbiddenError(i18n.__("INVALID_LOGIN_CREDENTIALS")));
         }
+        
 
         const token = jwt.sign(this.getPublicFields(), process.env.JWT_KEY);
 
@@ -63,19 +88,20 @@ module.exports= (schema, options = {}) => {
 
     };
 
-    schema.methods.resetFirstPassword = async function (rawPassword) {
+    schema.methods.startResetPasswordProcess = function() {
 
-        if (!rawPassword)
-            return Promise.reject("The user is missing the password");
+        this.resetPassword = {
+            otp: otp.generate(6, { specialChars: false, upperCase: false }),
+            createdAt: moment(),
+            validTill: moment().add(resetPasswordProcessDuration, 'seconds'),
+            remainingAttempts: 3
+        };
 
-        const didResetFirstPassword = this.didResetFirstPassword;
-
-        if (didResetFirstPassword) {
-            return Promise.reject(new ForbiddenError("User already changed the first password"));
-        }
-
-        this.hashPassword = await bcrypt.hash(rawPassword, ROUNDS);
-        this.didResetFirstPassword = true;
+        return {
+            createdAt: this.resetPassword.createdAt,
+            validTill: this.resetPassword.validTill
+        };
 
     };
+
 };

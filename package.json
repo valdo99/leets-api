@@ -5,6 +5,7 @@
   "main": "api.js",
   "scripts": {
     "dev": "pm2-dev api.js",
+    "stop-dev": "pm2-dev stop api.js",
     "start": "node api.js"
   },
   "engines": {

@@ -27,7 +27,7 @@ new utilities.express.Service(tagLabel)
             name,
             surname,
             email,
-            username
+            username: username.toLowerCase()
         });
 
         if (!(await user.isPasswordCompliant(password))) {
@@ -39,6 +39,8 @@ new utilities.express.Service(tagLabel)
                 password: i18n.__('FORM_PASSWORDS_DO_NOT_MATCH'),
                 repeatPassword: i18n.__('FORM_PASSWORDS_DO_NOT_MATCH'),
             });
+
+        // TODO check if username is compliant with some regex
 
         await user.setPassword(password);
 
