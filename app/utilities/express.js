@@ -12,6 +12,7 @@ module.exports.init = (_app, _authMiddleware = null) => {
     app = _app;
     authMiddleware = _authMiddleware;
     app.use(apiMiddleware);
+    app.use(httpContext.middleware);
 
 };
 

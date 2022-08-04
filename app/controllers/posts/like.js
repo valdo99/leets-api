@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Post = mongoose.model("Post")
+const Post = mongoose.model("Post");
 const tagLabel = "likePostProtectedController";
 
 new utilities.express.Service(tagLabel)
@@ -10,21 +10,25 @@ new utilities.express.Service(tagLabel)
 
         Post.findLikes(req.locals.user._id, {_id:id}, function(err, likes) {
             if (err) {
-                return res.forbidden("error")
+                console.log(err);
+
+                return res.forbidden("error");
             }
-            var hasLiked = !!likes.length;
+            let hasLiked = !!likes.length;
 
             if(hasLiked){
-                return res.forbidden("user already liked the post")
+                return res.resolve();
             }
 
             Post.like(id, req.locals.user._id, function(err) {
                 if(err){
-                    return res.forbidden("error")
-                }
-             });
+                    console.log(err);
 
-             return res.resolve()
+                    return res.forbidden("error");
+                }
+            });
+
+            return res.resolve();
         });
 
 

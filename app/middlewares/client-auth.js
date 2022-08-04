@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const httpContext = require("express-http-context");
+
 const jwt = require("jsonwebtoken");
 const Users = require("../models/users");
 
@@ -33,8 +35,10 @@ module.exports = async (req, res, next) => {
             return res.unauthorized();
         
         req.locals.user = user;
-
-        return next();
+        httpContext.set("context", user);
+        return await httpContext.ns.runPromise(async () => {
+            next();
+        });
     }
     catch (error) {
 

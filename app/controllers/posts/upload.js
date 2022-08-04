@@ -82,7 +82,6 @@ const getArtistData = async ({token,id}) => {
 
 new utilities.express.Service(tagLabel)
     .isPost()
-    .isPublic()
     .respondsAt('/posts/upload')
     .controller(async (req, res) => {
        const token = await getToken();
@@ -114,7 +113,7 @@ new utilities.express.Service(tagLabel)
             image: artistImages[0].url,
             followers: artistFollowers.total,
             spotify_id: artistId,
-            // hunter: req.locals.user._id
+            hunter: req.locals.user._id
           })
           await artist.save()
        }
@@ -133,7 +132,7 @@ new utilities.express.Service(tagLabel)
         image: postImage,
         preview_url,
         spotify_id: id,
-        // hunter: req.locals.user._id,
+        hunter: req.locals.user._id,
         artist: artist._id.toString()
        })
        

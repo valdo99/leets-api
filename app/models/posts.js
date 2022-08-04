@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 
 const publicFields = require("../plugins/public-fields");
 const mongooseErrors = require("../utils/mongoose-errors");
-var likesPlugin = require('mongoose-likes');
+const httpContext = require("express-http-context");
+
+let likesPlugin = require('mongoose-likes');
 
 
 const PostSchema = new mongoose.Schema(
@@ -30,7 +32,7 @@ const PostSchema = new mongoose.Schema(
         },
         status:{
             type:String,
-            enum:["UPLOADED","ACTIVE","REFUSED"],
+            enum:["UPLOADED", "ACTIVE", "REFUSED"],
             default:"UPLOADED"
         }
        
@@ -41,6 +43,13 @@ const PostSchema = new mongoose.Schema(
         toJSON: { getters: true }
     }
 );
+
+PostSchema.virtual("isLiked").get(function() {
+    const user = httpContext.get('context');
+    if(!user)
+        return false;
+    return this.users.includes(String(user._id));
+});
 
 PostSchema.plugin(likesPlugin, {
     // behaviour
@@ -73,7 +82,10 @@ PostSchema.plugin(publicFields, [
     "followers",
     "likes",
     "score",
-    "likers"
+    "likers",
+    "users",
+    "preview_url",
+    "isLiked"
 ]);
 
 
