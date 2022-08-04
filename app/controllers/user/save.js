@@ -23,6 +23,10 @@ new utilities.express.Service(tagLabel)
         if (await Users.findOne({email}))
             return res.forbidden(i18n.__("FORM_ERROR_EMAIL_IN_USE"));
 
+  
+        if (await Users.findOne({username}))
+            return res.forbidden("username already taken");      
+
         const user = new Users({
             name,
             surname,
@@ -53,6 +57,14 @@ new utilities.express.Service(tagLabel)
 
         res.resolve(user);
 
+        const mailer = new Mailer();
+        await mailer.setTemplate(api.config.email.templates.verification)
+            .to(user.name, user.email)
+            .setParams({
+                name:user.getFullName(),
+                link: `${process.env.API_URL}/auth/confirm-email?email=${user.email}&otp=${user.emailConfirmation.otp}`
+            })
+            .send();
 
 
         //TODO: use the new Mailer service and then Move to JOB

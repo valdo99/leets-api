@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 const defaultSender = {
-    name: 'Clear Connect',
-    email: process.env.NODE_ENV === "PROD" ? 'info@clearconnection.it' : "clear.connection.sendinblue@gmail.com"
+    name: 'Leets',
+    email: "edvaldo99@icloud.com"
 };
 
 class Mailer {
@@ -38,10 +38,6 @@ class Mailer {
         return this;
     }
 
-    setReplyTo(){
-        this.replyTo = {"email":"info@cleaerconnection.it", "name":"ClearConnection"};
-        return this;
-    }
 
     setContent(html) {
 
@@ -96,10 +92,7 @@ class Mailer {
                 payload.params = this.params;
             }
 
-        } else if (this.content) {
-            payload.htmlContent = this.content;
-            payload.replyTo = this.replyTo;
-        }
+        } 
 
         if(this.sender){
             payload.sender = this.sender;
