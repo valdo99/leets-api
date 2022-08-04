@@ -11,7 +11,6 @@ class Mailer {
         this.sender = defaultSender;
     }
 
-
     to() {
 
         if(arguments.length === 2) {
