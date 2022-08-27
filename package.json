@@ -1,7 +1,7 @@
 {
-  "name": "lits-api",
+  "name": "leets-api",
   "version": "1.0.0",
-  "description": "api for lits",
+  "description": "api for leets",
   "main": "api.js",
   "scripts": {
     "dev": "pm2-dev api.js",
