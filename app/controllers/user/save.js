@@ -14,18 +14,25 @@ new utilities.express.Service(tagLabel)
     .respondsAt('/users')
     .controller(async (req, res) => {
 
-        const {name, surname, email, username, password, repeatPassword, terms} = req.body;
+        const { name, surname, email, username, password, repeatPassword, terms } = req.body;
 
 
-        if (terms !== true )
-            return res.badRequest({terms: i18n.__('MISSING_CONSENSUS')});
+        if (terms !== true)
+            return res.badRequest({ terms: i18n.__('MISSING_CONSENSUS') });
 
-        if (await Users.findOne({email}))
+        if (await Users.findOne({ email }))
             return res.forbidden(i18n.__("FORM_ERROR_EMAIL_IN_USE"));
 
-  
-        if (await Users.findOne({username}))
-            return res.forbidden("username already taken");      
+
+        if (await Users.findOne({ username }))
+            return res.forbidden("username already taken");
+
+        if (!(/^(?!.*\.\.)(?!.*\.$)[^\W][\w.]{0,29}$/.test(username))) {
+            res.badRequest({
+                username: "username must contain only letters, numbers and these special characters: ._"
+            })
+        }
+
 
         const user = new Users({
             name,
@@ -35,7 +42,7 @@ new utilities.express.Service(tagLabel)
         });
 
         if (!(await user.isPasswordCompliant(password))) {
-            return res.badRequest({password:i18n.__("PASSWORD_NOT_COMPLIANT")});
+            return res.badRequest({ password: i18n.__("PASSWORD_NOT_COMPLIANT") });
         }
 
         if (password !== repeatPassword)
@@ -45,6 +52,7 @@ new utilities.express.Service(tagLabel)
             });
 
         // TODO check if username is compliant with some regex
+
 
         await user.setPassword(password);
 
@@ -61,7 +69,7 @@ new utilities.express.Service(tagLabel)
         await mailer.setTemplate(api.config.email.templates.verification)
             .to(user.name, user.email)
             .setParams({
-                name:user.getFullName(),
+                name: user.getFullName(),
                 link: `${process.env.API_URL}/auth/confirm-email?email=${user.email}&otp=${user.emailConfirmation.otp}`
             })
             .send();
