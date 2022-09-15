@@ -12,13 +12,16 @@ new utilities.express.Service(tagLabel)
     .isPublic()
     .controller(async (req, res) => {
 
-        const user = await Users.findOne({ username: req.params.username }).select("_id username createdAt name surname");
-        const likes = await Posts.find({ users: user._id }).count()
-        const hunts = await Posts.find({ hunter: user._id }).count()
+        const user = await Users.findOne({ username: req.params.username, emailConfirmation: { confirmed: true } }).select("_id username createdAt name surname");
+
         if (!user) {
             return res.notFound("User not found");
         }
 
-        res.resolve({ user, hunts, likes });
+        if (req.body.username && req.body.username !== user.username) {
+
+        }
+
+        res.resolve(user);
 
     });
