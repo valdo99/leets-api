@@ -70,7 +70,10 @@ new utilities.express.Service(tagLabel)
                 {
                     '$match': {
                         'createdAt': {
-                            '$lte': new Date('Thu, 02 Feb 2023 00:00:00 GMT')
+                            '$gte': moment(day).startOf("day").toISOString(),
+                        },
+                        'createdAt': {
+                            '$lte': moment(day).endOf("day").toISOString()
                         },
                         'status': 'UPLOADED'
                     }
@@ -122,7 +125,7 @@ new utilities.express.Service(tagLabel)
                                             '$cond': [
                                                 {
                                                     '$eq': [
-                                                        '$user', new ObjectId('62e021117db9da7672bc9cdd')
+                                                        '$user', req?.locals?.user?._id
                                                     ]
                                                 }, 1, 0
                                             ]
