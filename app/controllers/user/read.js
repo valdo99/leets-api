@@ -12,7 +12,11 @@ new utilities.express.Service(tagLabel)
     .isPublic()
     .controller(async (req, res) => {
 
-        const user = await Users.findOne({ username: req.params.username, emailConfirmation: { confirmed: true } }).select("_id username createdAt name surname");
+        const user = await Users.findOne({
+            username: req.params.username,
+            "emailConfirmation.confirmed": true
+            // emailConfirmation: { confirmed: true }
+        }).select("_id username createdAt name surname");
 
         if (!user) {
             return res.notFound("User not found");
