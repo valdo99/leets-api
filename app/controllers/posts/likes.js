@@ -1,25 +1,40 @@
 const mongoose = require('mongoose');
-const Post = mongoose.model("Post")
+const Likes = mongoose.model("Like")
 const tagLabel = "likePostProtectedController";
 
+const PER_PAGE = 20;
+
 new utilities.express.Service(tagLabel)
-    .isPost()
+    .isGet()
     .isPublic()
     .respondsAt('/posts/:id/likes')
     .controller(async (req, res) => {
-        const {id} = req.params;
+        const { id } = req.params;
+        const { createdAt = -1 } = req.query;
 
-        const post = await Post.findOne({_id:id}).select("users likes").populate({
-            path:"users",
-            model:"User",
-            select:"username name surname"
-        });
+        let page = parseInt(req.query.page);
+        if (isNaN(page)) page = 0;
 
-        if(!post){
-            return res.notFound();
+        const query = {
+            post: id,
         }
 
-        return res.resolve(post)
+
+        const likes = await Likes.find(query).select("createdAt _id user ").populate({
+            path: "user",
+            model: "User",
+            select: "_id name surname username"
+        }).sort({ createdAt })
+            .skip(page * PER_PAGE)
+            .limit(PER_PAGE);
+
+        res.setPagination({
+            total: await Likes.countDocuments(query),
+            perPage: PER_PAGE,
+            page
+        });
+
+        return res.resolve(likes)
 
 
     });

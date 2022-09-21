@@ -22,9 +22,6 @@ new utilities.express.Service(tagLabel)
             return res.notFound("User not found");
         }
 
-        if (req.body.username && req.body.username !== user.username) {
-
-        }
 
         res.resolve(user);
 

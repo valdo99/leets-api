@@ -4,7 +4,6 @@ const publicFields = require("../plugins/public-fields");
 const mongooseErrors = require("../utils/mongoose-errors");
 const httpContext = require("express-http-context");
 
-let likesPlugin = require('mongoose-likes');
 
 
 const PostSchema = new mongoose.Schema(
@@ -22,20 +21,20 @@ const PostSchema = new mongoose.Schema(
         spotify_id: {
             type: String,
         },
-        hunter:{
+        hunter: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
-        artist:{
+        artist: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Artist"
         },
-        status:{
-            type:String,
-            enum:["UPLOADED", "ACTIVE", "REFUSED"],
-            default:"UPLOADED"
+        status: {
+            type: String,
+            enum: ["UPLOADED", "ACTIVE", "REFUSED"],
+            default: "UPLOADED"
         }
-       
+
     },
     {
         collection: "posts",
@@ -44,32 +43,7 @@ const PostSchema = new mongoose.Schema(
     }
 );
 
-PostSchema.virtual("isLiked").get(function() {
-    const user = httpContext.get('context');
-    if(!user)
-        return false;
-    return this.users.includes(String(user._id));
-});
-
-PostSchema.plugin(likesPlugin, {
-    // behaviour
-    disableDislikes: true, // if true, turns off disliking
-    
-    // Property names
-    likesName: 'likes',
-    scoreName: 'score',
-    
-    likersName: 'users',
-    
-    // Function names
-    likeFuncName: 'like',
-    cancelLikeFuncName: 'cancelLike',
-    findLikes: 'findLikes',
-    
-    // other options
-    likerIdType: mongoose.Schema.Types.ObjectId, // The type to use in the likers/dislikers array
-    indexed: true // whether to generate the indexes {_id:1, likers:1}, and {_id:1, dislikers:1}
-});
+// creare post findOne e inserire all'interno il numero totale dei like
 
 
 PostSchema.plugin(publicFields, [
