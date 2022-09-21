@@ -51,7 +51,7 @@ const setContextIfUserLogged = async (req) => {
 new utilities.express.Service(tagLabel)
     .isGet()
     .isPublic()
-    .respondsAt('/feed')
+    .respondsAt('/posts/feed')
     .controller(async (req, res) => {
 
         await setContextIfUserLogged(req);
