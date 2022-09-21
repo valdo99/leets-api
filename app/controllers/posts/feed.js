@@ -1,6 +1,6 @@
 const moment = require('moment');
 const mongoose = require('mongoose');
-const Likes = mongoose.model("Like");
+const Posts = mongoose.model("Post");
 const Users = mongoose.model("User");
 
 const httpContext = require("express-http-context");
@@ -8,11 +8,6 @@ const jwt = require("jsonwebtoken");
 
 const tagLabel = "feedController";
 
-function getDateOfWeek(w, y) {
-    let d = (1 + (w - 1) * 7); // 1st of January + 7 days for each week
-
-    return new Date(y, 0, d);
-}
 
 const setContextIfUserLogged = async (req) => {
     try {
@@ -56,25 +51,17 @@ const setContextIfUserLogged = async (req) => {
 new utilities.express.Service(tagLabel)
     .isGet()
     .isPublic()
-    .respondsAt('/posts/feed')
+    .respondsAt('/feed')
     .controller(async (req, res) => {
 
         await setContextIfUserLogged(req);
 
-        const { day } = req.query;
+        const { page = 0, limit = 20, date = new Date() } = req.query;
 
-
-
-        const feed = await Likes.aggregate(
+        const feed = await Posts.aggregate(
             [
                 {
                     '$match': {
-                        'createdAt': {
-                            '$gte': moment(day).startOf("day").toISOString(),
-                        },
-                        'createdAt': {
-                            '$lte': moment(day).endOf("day").toISOString()
-                        },
                         'status': 'UPLOADED'
                     }
                 }, {
@@ -170,11 +157,11 @@ new utilities.express.Service(tagLabel)
                                                 ]
                                             }, {
                                                 '$gte': [
-                                                    '$createdAt', new Date('Fri, 09 Sep 2022 00:00:00 GMT')
+                                                    '$createdAt', moment(date).startOf("day").toISOString()
                                                 ]
                                             }, {
                                                 '$lte': [
-                                                    '$createdAt', new Date('Sun, 01 Jan 2023 00:00:00 GMT')
+                                                    '$createdAt', moment(date).endOf("day").toISOString()
                                                 ]
                                             }
                                         ]
@@ -226,23 +213,32 @@ new utilities.express.Service(tagLabel)
                             ]
                         }
                     }
+                },
+                {
+                    $project: {
+                        "hunter.isAdmin": 0,
+                        "hunter.emailConfirmation": 0,
+                        "hunter.hashPassword": 0,
+                        "hunter.email": 0,
+
+                    }
+                },
+                {
+                    "$sort": {
+                        partialLikes: -1,
+                        createdAt: -1
+                    }
+                }, {
+                    "$skip": page * limit
+                },
+                {
+                    "$limit": limit
                 }
             ]
         )
 
 
-        const posts = await Post.find({
-            createdAt: {
-                $gte: moment(day).startOf("day").toISOString(),
-                $lte: moment(day).endOf("day").toISOString()
-
-            }
-        }).sort({ likes: -1 }).populate({
-            path: "artist",
-            model: "Artist"
-        });
-
-        return res.resolve(posts);
+        return res.resolve(feed);
 
 
     });
