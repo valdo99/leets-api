@@ -11,25 +11,30 @@ const cors = require('cors');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const Agendash = require('agendash');
+
 
 
 require('./application-boot');
 
 
 const authMiddleware = require('./app/middlewares/client-auth');
+const agendaMiddleware = require("./app/middlewares/agenda-auth")
 
 const apiApp = express();
+const agendashApp = express();
+
 
 apiApp.disable('x-powered-by');
 
 apiApp.use(cors());
 apiApp.options('*', cors());
 
-apiApp.use(require('morgan')("combined", {"stream": utilities.logger.stream}));
+apiApp.use(require('morgan')("combined", { "stream": utilities.logger.stream }));
 apiApp.use(express.static('app/public'));
 apiApp.use(compression());
 apiApp.use(helmet());
-apiApp.use(bodyParser.json({limit: '1mb'}));
+apiApp.use(bodyParser.json({ limit: '1mb' }));
 
 
 apiApp.get('/favicon.ico', (req, res) => res.status(204));
@@ -37,10 +42,10 @@ apiApp.get('/favicon.ico', (req, res) => res.status(204));
 utilities.express.init(apiApp, authMiddleware);
 
 
-(async ()=>{
+(async () => {
 
     const db = await require('./app/utils/db');
-    utilities.logger.info(`Successfully connected to MongoDB cluster.`, {tagLabel, env: process.env.NODE_ENV});
+    utilities.logger.info(`Successfully connected to MongoDB cluster.`, { tagLabel, env: process.env.NODE_ENV });
 
 
 
@@ -54,7 +59,7 @@ utilities.express.init(apiApp, authMiddleware);
         "app/controllers/**/*.js"
     ];
 
-    for(const pattern of patterns) {
+    for (const pattern of patterns) {
         const files = glob.sync(pattern, null);
 
         for (const filePath of files) {
@@ -62,14 +67,20 @@ utilities.express.init(apiApp, authMiddleware);
         }
     }
 
+    agendashApp.use(
+        "/",
+        agendaMiddleware,
+        Agendash(utilities.dependencyLocator.get('agenda'), { title: `SOLIDUS-WORKER (${process.env.NODE_ENV.substring(0, 3)})` })
+    );
+
     apiApp.use('*', (req, res) => res.notFound());
 
     apiApp.use(function (error, req, res, next) {
 
         if (error) {
 
-            utilities.logger.error("API ERROR NOT HANDLED", {error});
-            res.status(400).json({code: 400, data: {}});
+            utilities.logger.error("API ERROR NOT HANDLED", { error });
+            res.status(400).json({ code: 400, data: {} });
 
         }
 
@@ -78,17 +89,24 @@ utilities.express.init(apiApp, authMiddleware);
     });
 
     apiApp.listen(process.env.PORT, async () => {
+        await utilities.dependencyLocator.get('agenda').start();
+        utilities.logger.info('Agenda client running', { tagLabel });
 
-        utilities.logger.info('API server running', {tagLabel, port: process.env.PORT});
+
+        utilities.logger.info('API server running', { tagLabel, port: process.env.PORT });
 
         if (process && typeof process.send === 'function') process.send('ready');
 
     });
 
+    agendashApp.listen(process.env.AGENDASH_PORT, () => {
+        utilities.logger.info('AgendaDash running', { tagLabel, port: process.env.AGENDASH_PORT });
+    });
+
 })();
 
 const shutdown = () => {
-    utilities.logger.info("Goodbye!", {tagLabel});
+    utilities.logger.info("Goodbye!", { tagLabel });
     process.exit();
 };
 
