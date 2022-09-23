@@ -22,7 +22,6 @@ const authMiddleware = require('./app/middlewares/client-auth');
 const agendaMiddleware = require("./app/middlewares/agenda-auth")
 
 const apiApp = express();
-const agendashApp = express();
 
 
 apiApp.disable('x-powered-by');
@@ -67,8 +66,8 @@ utilities.express.init(apiApp, authMiddleware);
         }
     }
 
-    agendashApp.use(
-        "/",
+    apiApp.use(
+        "/agenda",
         agendaMiddleware,
         Agendash(utilities.dependencyLocator.get('agenda'), { title: `SOLIDUS-WORKER (${process.env.NODE_ENV.substring(0, 3)})` })
     );
@@ -99,9 +98,6 @@ utilities.express.init(apiApp, authMiddleware);
 
     });
 
-    agendashApp.listen(process.env.AGENDASH_PORT, () => {
-        utilities.logger.info('AgendaDash running', { tagLabel, port: process.env.AGENDASH_PORT });
-    });
 
 })();
 
