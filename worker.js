@@ -7,7 +7,7 @@ const tagLabel = process.name;
 
 const glob = require('glob');
 
-require('./bootstrap-application');
+require('./application-boot');
 
 
 const patterns = [

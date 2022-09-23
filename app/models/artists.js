@@ -21,11 +21,14 @@ const ArtistSchema = new mongoose.Schema(
         spotify_id: {
             type: String,
         },
-        hunter:{
+        hunter: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
-        }
-       
+        },
+        monthly_listeners: {
+            type: Number,
+        },
+
     },
     {
         collection: "artists",
@@ -42,7 +45,8 @@ ArtistSchema.plugin(publicFields, [
     "hunter",
     "name",
     "image",
-    "followers"
+    "followers",
+    "monthly_listeners"
 ]);
 
 

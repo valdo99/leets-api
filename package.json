@@ -37,6 +37,7 @@
     "morgan": "^1.10.0",
     "pm2": "^5.2.0",
     "process": "^0.11.10",
+    "puppeteer": "^18.0.5",
     "terminal-kit": "^2.4.0",
     "uuid": "^8.3.2",
     "validator": "^13.7.0",
