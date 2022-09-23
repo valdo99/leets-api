@@ -36,6 +36,7 @@
     "mongoose-sequence": "^5.3.1",
     "morgan": "^1.10.0",
     "pm2": "^5.2.0",
+    "posthog-node": "^2.1.0",
     "process": "^0.11.10",
     "puppeteer": "^18.0.5",
     "terminal-kit": "^2.4.0",

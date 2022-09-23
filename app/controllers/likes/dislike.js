@@ -17,5 +17,13 @@ new utilities.express.Service(tagLabel)
 
         await Like.findOneAndDelete({ post: id })
 
+        utilities.dependencyLocator.get('posthog').capture({
+            distinctId: req.locals.user._id,
+            properties: {
+                postTitle: post.title
+            },
+            event: 'post-dislike'
+        })
+
         res.resolve()
     });

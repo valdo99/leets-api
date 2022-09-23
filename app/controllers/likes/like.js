@@ -22,6 +22,13 @@ new utilities.express.Service(tagLabel)
 
         try {
             await like.save()
+            utilities.dependencyLocator.get('posthog').capture({
+                distinctId: req.locals.user._is,
+                properties: {
+                    postTitle: post.title
+                },
+                event: 'post-like'
+            })
         } catch (error) {
             utilities.logger.error("DUPLICATE INDEX LIKE", {
                 user: req.locals.user._id,

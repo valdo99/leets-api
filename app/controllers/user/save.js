@@ -63,7 +63,25 @@ new utilities.express.Service(tagLabel)
 
         await user.save();
 
+
         res.resolve(user);
+
+        const posthog = utilities.dependencyLocator.get('posthog');
+
+        posthog.identify({
+            distinctId: user._id,
+            properties: {
+                name: user.name,
+                surname: user.surname,
+                username: user.username,
+                createdAt: user.createdAt
+            }
+        })
+
+        posthog.capture({
+            distinctId: user._id,
+            event: 'sign-up'
+        })
 
         const mailer = new Mailer();
         await mailer.setTemplate(api.config.email.templates.verification)

@@ -9,7 +9,7 @@ new utilities.express.Service(tagLabel)
     .isPublic()
     .respondsAt('/auth/forgot-password')
     .controller(async (req, res) => {
-        const {email} = req.body;
+        const { email } = req.body;
 
         if (!email) return res.forbidden(i18n.__('EMAIL_MISSING'));
 
@@ -20,27 +20,32 @@ new utilities.express.Service(tagLabel)
         if (!user)
             return res.forbidden(i18n.__('USER_NOT_FOUND'));
 
-        if(user.resetPassword && user.resetPassword.validTill > new Date())
+        if (user.resetPassword && user.resetPassword.validTill > new Date())
             return res.forbidden(i18n.__('EXISTENT_RESET_PASSWORD_PROCESS'));
-        
+
         const data = user.startResetPasswordProcess();
-       
+
         await user.save();
+
+        utilities.dependencyLocator.get('posthog').capture({
+            distinctId: user._id,
+            event: 'forgot-password'
+        })
 
         const mailer = new Mailer();
         await mailer.setTemplate(api.config.email.templates.lostPassword)
             .to(user.name, user.email)
             .setParams({
-                name:user.getFullName(),
-                OTP:user.resetPassword.otp,
+                name: user.getFullName(),
+                OTP: user.resetPassword.otp,
                 link: `${process.env.APP_URL}/login?resetPassword=true&email=${user.email}`
-    
+
             })
             .send();
 
         return res.resolve(data);
 
-        
-        
+
+
 
     });
