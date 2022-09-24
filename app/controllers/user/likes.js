@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const Users = mongoose.model('User');
 const Likes = mongoose.model('Like');
 
+const httpContext = require("express-http-context");
+const jwt = require("jsonwebtoken");
 
 const tagLabel = "userLikesReadPublicController";
 
@@ -30,6 +32,8 @@ const setContextIfUserLogged = async (req) => {
         const query = { _id: decodedUser._id };
 
         const user = await Users.findOne(query);
+
+        console.log(user);
 
         if (!user)
             return;
@@ -158,9 +162,7 @@ new utilities.express.Service(tagLabel)
 
         ]
 
-        console.log(req.locals.user);
         if (req?.locals?.user) {
-            console.log('here');
             aggreagate[0].$group.isLiked = {
                 '$sum': {
                     '$cond': [
