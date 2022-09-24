@@ -157,11 +157,11 @@ new utilities.express.Service(tagLabel)
                                                 ]
                                             }, {
                                                 '$gte': [
-                                                    '$createdAt', moment(date).startOf("day").toISOString()
+                                                    '$createdAt', new Date(moment(date).startOf("day"))
                                                 ]
                                             }, {
                                                 '$lte': [
-                                                    '$createdAt', moment(date).endOf("day").toISOString()
+                                                    '$createdAt', new Date(moment(date).endOf("day"))
                                                 ]
                                             }
                                         ]
@@ -225,7 +225,7 @@ new utilities.express.Service(tagLabel)
                 },
                 {
                     "$sort": {
-                        partialLikes: -1,
+                        "partialLikes": -1,
                         createdAt: -1
                     }
                 }, {
@@ -236,8 +236,6 @@ new utilities.express.Service(tagLabel)
                 }
             ]
         )
-
-
 
         return res.resolve(feed);
 
