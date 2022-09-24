@@ -4,11 +4,11 @@ const Users = mongoose.model('User');
 const Posts = mongoose.model('Post');
 
 
-const tagLabel = "userUploadsReadPublicController";
+const tagLabel = "userLikesReadPublicController";
 
 new utilities.express.Service(tagLabel)
     .isGet()
-    .respondsAt('/users/:username/uploads')
+    .respondsAt('/users/:username/likes')
     .isPublic()
     .controller(async (req, res) => {
 

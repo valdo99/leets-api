@@ -13,6 +13,7 @@ new utilities.express.Service(tagLabel)
     .controller(async (req, res) => {
 
         const user = await Users.findOne({ username: req.params.username });
+
         if (!user) {
             return res.notFound("User not found");
         }
