@@ -1,5 +1,5 @@
 module.exports = {
     templates: {
-        verification: 2,
+        verification: 1,
     }
 };
