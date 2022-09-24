@@ -40,6 +40,17 @@ apiApp.get('/favicon.ico', (req, res) => res.status(204));
 utilities.express.init(apiApp, authMiddleware);
 
 
+if (process.env.NODE_ENV === 'DEV') {
+
+    utilities.githubHookExpress.init(process.env.GITHUB_HOOK_SECRET, () => process.exit());
+
+
+    apiApp.post('/hooks/github', utilities.githubHookExpress.controller);
+    utilities.logger.info("Webhook for Github available on /hooks/github", { tagLabel });
+
+}
+
+
 (async () => {
 
     const db = await require('./app/utils/db');
