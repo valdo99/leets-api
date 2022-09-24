@@ -10,20 +10,7 @@ new utilities.express.Service(tagLabel)
 
         const { id } = req.params;
 
-        const post = await Post.findOne({ _id: id })
-
-        if (!post)
-            return res.forbidden("error");
-
-        await Like.findOneAndDelete({ post: id })
-
-        utilities.dependencyLocator.get('posthog').capture({
-            distinctId: req.locals.user._id,
-            properties: {
-                postTitle: post.title
-            },
-            event: 'post-dislike'
-        })
+        await Like.findOneAndDelete({ post: id, user: req.locals.user._id })
 
         res.resolve()
     });
