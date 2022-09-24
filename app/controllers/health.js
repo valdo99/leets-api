@@ -3,7 +3,7 @@
 const tagLabel = "healthController";
 
 new utilities.express.Service(tagLabel)
-    .isPost()
+    .isGet()
     .isPublic()
     .respondsAt('/health')
     .controller(async (req, res) => {
