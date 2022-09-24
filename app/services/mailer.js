@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const defaultSender = {
     name: 'Leets',
-    email: "edvaldo99@icloud.com"
+    email: "hey@leets.it"
 };
 
 class Mailer {
@@ -13,10 +13,10 @@ class Mailer {
 
     to() {
 
-        if(arguments.length === 2) {
+        if (arguments.length === 2) {
             this.name = arguments[0];
             this.email = arguments[1];
-        } else if(arguments.length === 1) {
+        } else if (arguments.length === 1) {
             this.name = arguments[0].name;
             this.email = arguments[0].email;
         }
@@ -68,11 +68,11 @@ class Mailer {
     }
 
 
-    async send(admins=null) {
+    async send(admins = null) {
 
 
         const payload = {
-            to: admins ? admins : [{name: this.name, email: this.email}],
+            to: admins ? admins : [{ name: this.name, email: this.email }],
         };
 
         if (this.params)
@@ -81,7 +81,7 @@ class Mailer {
         if (this.subject)
             payload.subject = this.subject;
 
-        if(this.attachments)
+        if (this.attachments)
             payload.attachment = this.attachments;
 
         if (this.template) {
@@ -91,9 +91,9 @@ class Mailer {
                 payload.params = this.params;
             }
 
-        } 
+        }
 
-        if(this.sender){
+        if (this.sender) {
             payload.sender = this.sender;
         }
 

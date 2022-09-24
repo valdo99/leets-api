@@ -33,8 +33,6 @@ const setContextIfUserLogged = async (req) => {
 
         const user = await Users.findOne(query);
 
-        console.log(user);
-
         if (!user)
             return;
 
