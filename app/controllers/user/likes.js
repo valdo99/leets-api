@@ -40,6 +40,64 @@ new utilities.express.Service(tagLabel)
                 '$match': {
                     'isLiked': 1
                 }
+            }, {
+                '$lookup': {
+                    'from': 'posts',
+                    'localField': '_id',
+                    'foreignField': '_id',
+                    'as': 'post'
+                }
+            },
+            {
+                '$unwind': {
+                    'path': '$post'
+                }
+            },
+            {
+                '$replaceRoot': {
+                    'newRoot': {
+                        '$mergeObjects': [
+                            '$$ROOT', '$post'
+                        ]
+                    }
+                }
+            },
+            {
+                '$lookup': {
+                    'from': 'users',
+                    'localField': 'hunter',
+                    'foreignField': '_id',
+                    'as': 'hunter'
+                }
+            },
+            {
+                '$unwind': {
+                    'path': '$hunter'
+                }
+            },
+            {
+                '$lookup': {
+                    'from': 'artists',
+                    'localField': 'artist',
+                    'foreignField': '_id',
+                    'as': 'artist'
+                }
+            }, {
+                '$unwind': {
+                    'path': '$artist'
+                }
+            },
+            {
+                "$project": {
+                    post: 0,
+                    "hunter.isAdmin": 0,
+                    "hunter.emailConfirmation": 0,
+                    "hunter.hashPassword": 0,
+                    "hunter.email": 0,
+                    "artist.__v": 0,
+                    "hunter.__v": 0
+
+                }
             }
 
         ])
