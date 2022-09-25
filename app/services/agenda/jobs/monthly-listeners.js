@@ -16,9 +16,18 @@ module.exports = agenda =>
             return job.fail("artist doesn't exist in db")
         }
 
-        const browser = await puppeteer.launch({
-            headless: true,
-        });
+        let browser;
+        if (process.env.NODE_ENV === "DEV") {
+            browser = await puppeteer.launch({
+                headless: true,
+                executablePath: '/usr/bin/chromium-browser'
+            });
+        } else {
+            browser = await puppeteer.launch({
+                headless: true,
+            });
+        }
+
 
         let listeners;
 
