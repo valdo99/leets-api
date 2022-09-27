@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const publicFields = require("../plugins/public-fields");
 const mongooseErrors = require("../utils/mongoose-errors");
-const httpContext = require("express-http-context");
 
 
 
@@ -31,8 +30,8 @@ const PostSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["UPLOADED", "ACTIVE", "REFUSED"],
-            default: "UPLOADED"
+            enum: ["CREATED", "UPLOADED", "ONLINE"],
+            default: "CREATED"
         }
 
     },

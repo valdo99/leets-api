@@ -62,7 +62,7 @@ new utilities.express.Service(tagLabel)
             [
                 {
                     '$match': {
-                        'status': 'UPLOADED'
+                        'status': 'ONLINE'
                     }
                 }, {
                     '$lookup': {

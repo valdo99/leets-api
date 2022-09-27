@@ -67,11 +67,13 @@ new utilities.express.Service(tagLabel)
         //1. POST HUNTATI DA UN UTENTE
         //2. JOINARE TABELLA LIKE
         //3. RITORNARE NUMERO TOTALE DEI LIKE DI UN POST
-
-        const hunts = await Posts.aggregate([
+        const aggregate = [
             {
                 $match: {
-                    hunter: user._id
+                    hunter: user._id,
+                    status: {
+                        $in: ["UPLOADED", "ONLINE"]
+                    }
                 }
             },
             {
@@ -162,7 +164,13 @@ new utilities.express.Service(tagLabel)
                     "artist.__v": 0,
                 }
             },
-        ])
+        ]
+
+        if (!user) {
+            aggregate[0].$match.status = "ONLINE"
+        }
+
+        const hunts = await Posts.aggregate(aggregate)
 
 
         res.resolve(hunts);

@@ -7,6 +7,8 @@ const moment = require('moment');
 
 const tagLabel = "uploadSpotifyLinkProtectedController";
 
+const MAX_SONGS_PER_ARTIST_PER_MONTH = 3
+
 var authOptions = {
   url: "https://accounts.spotify.com/api/token",
   headers: {
@@ -24,7 +26,6 @@ var authOptions = {
   },
   json: true,
 };
-
 
 const getToken = async () => {
   const token = await AccessToken.findOne({
@@ -87,6 +88,15 @@ new utilities.express.Service(tagLabel)
     const token = await getToken();
     const { id } = req.body;
 
+    const existingPost = await Post.findOne({ spotify_id: id, status: { $neq: "CREATED" } })
+
+    if (existingPost.status === "CREATED") {
+      existingPost.status = "UPLOADED"
+      await existingPost.save()
+      return res.resolve(existingPost)
+    }
+
+
     const { name: title, preview_url, artists, album } = await getTrackData({ id, token })
 
     const {
@@ -97,10 +107,6 @@ new utilities.express.Service(tagLabel)
     } = await getArtistData({ id: artists[0].id, token });
 
     const postImage = album.images[0].url
-
-
-    //TODO check the followers of the artist and if it's too popular
-    //     return a forbidden error
 
     let artist;
 
@@ -118,13 +124,18 @@ new utilities.express.Service(tagLabel)
       await artist.save()
     }
 
+    const artistPosts = await Post.find({ artist: artist._id, createdAt: { $gte: new Date(moment().subtract(1, "months")) } })
+
+    if (artistPosts.length > MAX_SONGS_PER_ARTIST_PER_MONTH) {
+      return res.forbidden(`Non si possono caricare più di ${MAX_SONGS_PER_ARTIST_PER_MONTH} canzoni per artista per mese.`)
+    }
+
     // if the artist exists do we need to block the user to post the track?
 
     // create new Post
-    const existingPost = await Post.findOne({ spotify_id: id })
 
-    if (existingPost) {
-      return res.forbidden("Post already exists")
+    if (existingPost.status === "UPLOADED" || existingPost.status === "ONLINE") {
+      return res.forbidden("Track già caricato.")
     }
 
     const newPost = new Post({
