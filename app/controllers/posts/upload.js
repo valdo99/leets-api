@@ -88,7 +88,7 @@ new utilities.express.Service(tagLabel)
     const token = await getToken();
     const { id } = req.body;
 
-    const existingPost = await Post.findOne({ spotify_id: id, status: { $neq: "CREATED" } })
+    const existingPost = await Post.findOne({ spotify_id: id })
 
     if (existingPost.status === "CREATED") {
       existingPost.status = "UPLOADED"
