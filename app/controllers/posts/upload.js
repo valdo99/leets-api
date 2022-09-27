@@ -134,7 +134,7 @@ new utilities.express.Service(tagLabel)
 
     // create new Post
 
-    if (existingPost && existingPost.status === "UPLOADED" || existingPost.status === "ONLINE") {
+    if (existingPost && (existingPost.status === "UPLOADED" || existingPost.status === "ONLINE")) {
       return res.forbidden("Track già caricato.")
     }
 
