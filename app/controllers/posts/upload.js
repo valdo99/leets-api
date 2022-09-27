@@ -90,7 +90,7 @@ new utilities.express.Service(tagLabel)
 
     const existingPost = await Post.findOne({ spotify_id: id })
 
-    if (existingPost.status === "CREATED") {
+    if (existingPost && existingPost.status === "CREATED") {
       existingPost.status = "UPLOADED"
       await existingPost.save()
       return res.resolve(existingPost)
@@ -134,7 +134,7 @@ new utilities.express.Service(tagLabel)
 
     // create new Post
 
-    if (existingPost.status === "UPLOADED" || existingPost.status === "ONLINE") {
+    if (existingPost && existingPost.status === "UPLOADED" || existingPost.status === "ONLINE") {
       return res.forbidden("Track già caricato.")
     }
 
