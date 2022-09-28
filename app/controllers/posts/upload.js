@@ -150,13 +150,13 @@ new utilities.express.Service(tagLabel)
       artist: artist._id.toString()
     })
 
-    await newPost.save()
+    await (await newPost.save()).populate({
+      path: "artist",
+      model: "Artist"
+    })
 
     const agenda = utilities.dependencyLocator.get('agenda');
     await agenda.now("monthly listeners", { post: newPost })
 
-    res.resolve(newPost.populate({
-      path: "artist",
-      model: "Artist"
-    }))
+    res.resolve(newPost)
   });
