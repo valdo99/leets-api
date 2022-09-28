@@ -88,7 +88,10 @@ new utilities.express.Service(tagLabel)
     const token = await getToken();
     const { id } = req.body;
 
-    const existingPost = await Post.findOne({ spotify_id: id })
+    const existingPost = await Post.findOne({ spotify_id: id }).populate({
+      path: "artist",
+      model: "Artist"
+    })
 
     if (existingPost && existingPost.status === "CREATED") {
       existingPost.status = "UPLOADED"
@@ -152,5 +155,8 @@ new utilities.express.Service(tagLabel)
     const agenda = utilities.dependencyLocator.get('agenda');
     await agenda.now("monthly listeners", { post: newPost })
 
-    res.resolve(newPost)
+    res.resolve(newPost.populate({
+      path: "artist",
+      model: "Artist"
+    }))
   });
