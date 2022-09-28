@@ -85,78 +85,23 @@ new utilities.express.Service(tagLabel)
   .isPost()
   .respondsAt('/posts/upload')
   .controller(async (req, res) => {
-    const token = await getToken();
     const { id } = req.body;
 
-    const existingPost = await Post.findOne({ spotify_id: id }).populate({
+    const post = await Post.findOne({ spotify_id: id, status: "CREATED", hunter: req.locals.user._id }).populate({
       path: "artist",
       model: "Artist"
     })
 
-    if (existingPost && existingPost.status === "CREATED") {
-      existingPost.status = "UPLOADED"
-      await existingPost.save()
-      return res.resolve(existingPost)
-    }
+    if (!post)
+      return res.forbidden("Non hai mai creato una preview del brano.")
 
+    post.status = "UPLOADED";
 
-    const { name: title, preview_url, artists, album } = await getTrackData({ id, token })
+    await post.save();
 
-    const {
-      id: artistId,
-      images: artistImages,
-      name: artistName,
-      followers: artistFollowers
-    } = await getArtistData({ id: artists[0].id, token });
-
-    const postImage = album.images[0].url
-
-    let artist;
-
-    artist = await Artist.findOne({ spotify_id: artistId });
-
-
-    if (!artist) {
-      artist = new Artist({
-        name: artistName,
-        image: artistImages[0].url,
-        followers: artistFollowers.total,
-        spotify_id: artistId,
-        hunter: req.locals.user._id
-      })
-      await artist.save()
-    }
-
-    const artistPosts = await Post.find({ artist: artist._id, createdAt: { $gte: new Date(moment().subtract(1, "months")) } })
-
-    if (artistPosts.length > MAX_SONGS_PER_ARTIST_PER_MONTH) {
-      return res.forbidden(`Non si possono caricare più di ${MAX_SONGS_PER_ARTIST_PER_MONTH} canzoni per artista per mese.`)
-    }
-
-    // if the artist exists do we need to block the user to post the track?
-
-    // create new Post
-
-    if (existingPost && (existingPost.status === "UPLOADED" || existingPost.status === "ONLINE")) {
-      return res.forbidden("Track già caricato.")
-    }
-
-    const newPost = new Post({
-      title,
-      image: postImage,
-      preview_url,
-      spotify_id: id,
-      hunter: req.locals.user._id,
-      artist: artist._id.toString()
-    })
-
-    await (await newPost.save()).populate({
-      path: "artist",
-      model: "Artist"
-    })
 
     const agenda = utilities.dependencyLocator.get('agenda');
-    await agenda.now("monthly listeners", { post: newPost })
+    await agenda.now("monthly listeners", { post })
 
-    res.resolve(newPost)
+    res.resolve(post)
   });
