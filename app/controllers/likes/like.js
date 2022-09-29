@@ -10,7 +10,7 @@ new utilities.express.Service(tagLabel)
         const { id } = req.params;
 
 
-        const post = await Post.findOne({ _id: id })
+        const post = await Post.findOne({ _id: id, status: Post.STATUS_ONLINE })
 
         if (!post)
             return res.forbidden("error");

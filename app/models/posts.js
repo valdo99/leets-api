@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const publicFields = require("../plugins/public-fields");
 const mongooseErrors = require("../utils/mongoose-errors");
 
+const STATUS_CREATED = "CREATED";
+const STATUS_UPLOADED = "UPLOADED";
+const STATUS_ONLINE = "ONLINE";
+
 
 
 const PostSchema = new mongoose.Schema(
@@ -30,7 +34,7 @@ const PostSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["CREATED", "UPLOADED", "ONLINE"],
+            enum: [STATUS_CREATED, STATUS_UPLOADED, STATUS_ONLINE],
             default: "CREATED"
         }
 
@@ -42,6 +46,9 @@ const PostSchema = new mongoose.Schema(
     }
 );
 
+PostSchema.statics.STATUS_CREATED = STATUS_CREATED;
+PostSchema.statics.STATUS_UPLOADED = STATUS_UPLOADED;
+PostSchema.statics.STATUS_ONLINE = STATUS_ONLINE;
 // creare post findOne e inserire all'interno il numero totale dei like
 
 
