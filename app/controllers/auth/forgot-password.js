@@ -38,8 +38,7 @@ new utilities.express.Service(tagLabel)
             .setParams({
                 name: user.getFullName(),
                 OTP: user.resetPassword.otp,
-                link: `${process.env.APP_URL}/login?resetPassword=true&email=${user.email}`
-
+                link: `${process.env.APP_URL}/reset-password?email=${user.email}&OTP=${user.resetPassword.otp}`
             })
             .send();
 
