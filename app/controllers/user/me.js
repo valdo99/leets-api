@@ -10,12 +10,12 @@ new utilities.express.Service(tagLabel)
     .respondsAt('/users/me')
     .controller(async (req, res) => {
 
-        const user = await Users.findOne({_id:req.locals.user._id});
+        const user = await Users.findOne({ _id: req.locals.user._id });
 
         if (!user) {
-            return res.notFound("User not found");
+            return res.notFound(i18n.__("USER_NOT_FOUND"));
         }
-        
+
         res.resolve(user);
 
     });

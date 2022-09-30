@@ -93,7 +93,7 @@ new utilities.express.Service(tagLabel)
     })
 
     if (!post)
-      return res.forbidden("Non hai mai creato una preview del brano.")
+      return res.forbidden(i18n.__("PREVIEW_NOT_UPLOADED"))
 
     post.status = "UPLOADED";
 

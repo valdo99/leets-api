@@ -19,7 +19,7 @@ new utilities.express.Service(tagLabel)
         }).select("_id username createdAt name surname");
 
         if (!user) {
-            return res.notFound("User not found");
+            return res.notFound(i18n.__("USER_NOT_FOUND"));
         }
 
 

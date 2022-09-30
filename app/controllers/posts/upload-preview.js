@@ -125,7 +125,7 @@ new utilities.express.Service(tagLabel)
         const artistPosts = await Post.find({ artist: artist._id, createdAt: { $gte: new Date(moment().subtract(1, "months")) } })
 
         if (artistPosts.length > MAX_SONGS_PER_ARTIST_PER_MONTH) {
-            return res.forbidden(`Non si possono caricare più di ${MAX_SONGS_PER_ARTIST_PER_MONTH} canzoni per artista per mese.`)
+            return res.forbidden(i18n.__("MAX_SONGS_PER_ARTIST_REACHED", { max: MAX_SONGS_PER_ARTIST_PER_MONTH }))
         }
 
         const newPost = new Post({

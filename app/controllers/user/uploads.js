@@ -61,7 +61,7 @@ new utilities.express.Service(tagLabel)
         const user = await Users.findOne({ username: req.params.username });
 
         if (!user) {
-            return res.notFound("User not found");
+            return res.notFound(i18n.__("USER_NOT_FOUND"));
         }
 
         //1. POST HUNTATI DA UN UTENTE

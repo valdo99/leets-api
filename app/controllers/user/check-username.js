@@ -14,7 +14,7 @@ new utilities.express.Service(tagLabel)
         const user = await Users.findOne({ username: req.params.username });
 
         if (user) {
-            return res.forbidden("username already in use");
+            return res.forbidden(i18n.__("USERNAME_ALREADY_IN_USE"));
         }
 
         res.resolve();
