@@ -110,7 +110,6 @@ class Mailer {
                 data: payload,
                 timeout: 10000
             });
-
         } catch (error) {
             utilities.logger.error(error);
         }

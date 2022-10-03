@@ -1,13 +1,11 @@
 const mongoose = require('mongoose');
 const Post = mongoose.model("Post");
-const Artist = mongoose.model("Artist");
 const AccessToken = mongoose.model("AccessToken");
 const axios = require("axios");
 const moment = require('moment');
+const Mailer = require('../../services/mailer');
 
 const tagLabel = "uploadSpotifyLinkProtectedController";
-
-const MAX_SONGS_PER_ARTIST_PER_MONTH = 3
 
 var authOptions = {
   url: "https://accounts.spotify.com/api/token",
@@ -102,6 +100,16 @@ new utilities.express.Service(tagLabel)
 
     const agenda = utilities.dependencyLocator.get('agenda');
     await agenda.now("monthly listeners", { post })
+
+    const mailer = new Mailer();
+    await mailer.setTemplate(api.config.email.templates.songUploaded)
+      .to(req.locals.user.name, req.locals.user.email)
+      .setParams({
+        image: post.image,
+        title: post.title,
+        author: post.artist.name
+      })
+      .send();
 
     res.resolve(post)
   });
