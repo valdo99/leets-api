@@ -111,7 +111,7 @@ new utilities.express.Service(tagLabel)
             {
                 $match: {
                     "post.status": {
-                        $in: req?.locals?.user?._id && (req?.locals?.user?._id === user._id ? ["UPLOADED", "ONLINE"] : ["ONLINE"])
+                        $in: req?.locals?.user?._id === user._id ? ["UPLOADED", "ONLINE"] : ["ONLINE"]
                     }
                 }
             },
