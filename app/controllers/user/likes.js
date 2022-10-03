@@ -84,7 +84,7 @@ new utilities.express.Service(tagLabel)
                 }
             }, {
                 '$match': {
-                    'hasLiked': 1
+                    'hasLiked': 1,
                 }
             }, {
                 '$lookup': {
@@ -105,6 +105,13 @@ new utilities.express.Service(tagLabel)
                         '$mergeObjects': [
                             '$$ROOT', '$post'
                         ]
+                    }
+                }
+            },
+            {
+                $match: {
+                    "post.status": {
+                        $in: req?.locals?.user?._id && (req?.locals?.user?._id === user._id ? ["UPLOADED", "ONLINE"] : ["ONLINE"])
                     }
                 }
             },
