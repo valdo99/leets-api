@@ -93,13 +93,9 @@ new utilities.express.Service(tagLabel)
     if (!post)
       return res.forbidden(i18n.__("PREVIEW_NOT_UPLOADED"))
 
-    post.status = "UPLOADED";
+    post.status = "ONLINE";
 
     await post.save();
-
-
-    const agenda = utilities.dependencyLocator.get('agenda');
-    await agenda.now("monthly listeners", { post })
 
     const mailer = new Mailer();
     await mailer.setTemplate(api.config.email.templates.songUploaded)
