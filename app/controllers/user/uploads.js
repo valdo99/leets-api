@@ -134,6 +134,29 @@ new utilities.express.Service(tagLabel)
                 }
             },
             {
+                "$lookup": {
+                    'from': 'users',
+                    'localField': 'hunter',
+                    'foreignField': '_id',
+                    'as': 'hunter'
+                }
+            },
+            {
+                '$unwind': {
+                    'path': '$hunter',
+                    'preserveNullAndEmptyArrays': true
+                }
+            },
+            {
+                '$replaceRoot': {
+                    'newRoot': {
+                        '$mergeObjects': [
+                            '$$ROOT', '$hunter'
+                        ]
+                    }
+                }
+            },
+            {
                 '$set': {
                     'likes': {
                         '$ifNull': [
