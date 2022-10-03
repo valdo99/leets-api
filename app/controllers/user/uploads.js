@@ -72,7 +72,7 @@ new utilities.express.Service(tagLabel)
                 $match: {
                     hunter: user._id,
                     status: {
-                        $in: ["UPLOADED", "ONLINE"]
+                        $in: req?.locals?.user?._id && (req?.locals?.user?._id === user._id ? ["UPLOADED", "ONLINE"] : ["ONLINE"])
                     }
                 }
             },
