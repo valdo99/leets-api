@@ -11,8 +11,6 @@ new utilities.express.Service(tagLabel)
     .respondsAt('/feed/top-hunters')
     .controller(async (req, res) => {
 
-        const { page = 0, limit = 20, date = new Date() } = req.query;
-
         const feed = await Posts.aggregate(
             [
                 {
@@ -116,11 +114,9 @@ new utilities.express.Service(tagLabel)
                     "$sort": {
                         points: -1
                     }
-                }, {
-                    "$skip": page * limit
                 },
                 {
-                    "$limit": limit
+                    "$limit": 5
                 }
             ]
         )
