@@ -28,6 +28,15 @@ const ArtistSchema = new mongoose.Schema(
         monthly_listeners: {
             type: Number,
         },
+        biography: {
+            type: String,
+        },
+        headerImage: {
+            type: String,
+        },
+        topCities: {
+            type: Array
+        },
 
     },
     {

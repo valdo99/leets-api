@@ -95,15 +95,21 @@ new utilities.express.Service(tagLabel)
             return res.forbidden("Track già caricato.")
         }
 
-
         const { name: title, preview_url, artists, album } = await getTrackData({ id, token })
 
+
         const {
-            id: artistId,
             images: artistImages,
             name: artistName,
             followers: artistFollowers
         } = await getArtistData({ id: artists[0].id, token });
+
+        const { getArtist, getTrack } = utilities.dependencyLocator.get('spotify');
+
+        const { playcount, artistsWithRoles, albumOfTrack } = (await getTrack(id)).trackUnion
+
+        const artistId = artistsWithRoles.items.filter(el => el.role === "MAIN")[0].artist.id;
+        const artistData = await getArtist(artistId);
 
         const postImage = album.images[0].url
 
@@ -114,10 +120,13 @@ new utilities.express.Service(tagLabel)
         if (!artist) {
             artist = new Artist({
                 name: artistName,
-                image: artistImages[0].url,
+                image: artistData.visuals.avatarImage?.sources[0].url,
                 followers: artistFollowers.total,
                 spotify_id: artistId,
-                hunter: req.locals.user._id
+                hunter: req.locals.user._id,
+                headerImage: artistData.visuals.headerImage?.sources[0].url,
+                biography: artistData.profile.biography.text,
+                topCities: artistData.stats.topCities.items
             })
             await artist.save()
         }
@@ -134,7 +143,9 @@ new utilities.express.Service(tagLabel)
             preview_url,
             spotify_id: id,
             hunter: req.locals.user._id,
-            artist: artist._id.toString()
+            artist: artist._id.toString(),
+            playcount,
+            uploadedAt: albumOfTrack.date.isoString
         })
 
         await (await newPost.save()).populate({

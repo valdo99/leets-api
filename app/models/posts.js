@@ -36,6 +36,12 @@ const PostSchema = new mongoose.Schema(
             type: String,
             enum: [STATUS_CREATED, STATUS_UPLOADED, STATUS_ONLINE],
             default: "CREATED"
+        },
+        playcount: {
+            type: Number
+        },
+        uploadedAt: {
+            type: Date
         }
 
     },
