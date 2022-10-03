@@ -99,7 +99,6 @@ new utilities.express.Service(tagLabel)
 
 
         const {
-            images: artistImages,
             name: artistName,
             followers: artistFollowers
         } = await getArtistData({ id: artists[0].id, token });
@@ -110,6 +109,14 @@ new utilities.express.Service(tagLabel)
 
         const artistId = artistsWithRoles.items.filter(el => el.role === "MAIN")[0].artist.id;
         const artistData = await getArtist(artistId);
+
+        const monthlyListeners = artistData.stats.monthlyListeners
+
+        console.log(monthlyListeners);
+
+        if (monthlyListeners > 10000)
+            res.forbidden(i18n.__("MAX_LISTENERS_PER_ARTIST", { max: 10000 }))
+
 
         const postImage = album.images[0].url
 
