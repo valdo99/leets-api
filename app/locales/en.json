@@ -24,5 +24,5 @@
     "MAX_SONGS_PER_ARTIST_REACHED":"Non si possono caricare più di {{max}} canzoni per artista per mese.",
     "PREVIEW_NOT_UPLOADED":"Non hai mai creato una preview del brano.",
     "USERNAME_ALREADY_IN_USE":"Username di già in uso",
-    "MAX_LISTENERS_PER_ARTIST":"Per caricare questa canzone, l'artista deve avere meno di {{max}} ascolti"
-    }
+    "MAX_LISTENERS_PER_ARTIST":"Non puoi caricare questa canzone, l'artista non puo avere piu di {{max}} ascolti"
+}

@@ -115,7 +115,7 @@ new utilities.express.Service(tagLabel)
         console.log(monthlyListeners);
 
         if (monthlyListeners > 10000)
-            res.forbidden(i18n.__("MAX_LISTENERS_PER_ARTIST", { max: 10000 }))
+            return res.forbidden(i18n.__("MAX_LISTENERS_PER_ARTIST", { max: 10000 }))
 
 
         const postImage = album.images[0].url
