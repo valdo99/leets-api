@@ -12,8 +12,11 @@ module.exports = agenda =>
 
         const post = await Post.findOne({ _id: previewPost._id, status: "CREATED" })
 
-        if (post)
+        if (post) {
             await Artist.findOneAndDelete({ _id: post.artist, uploaded: false });
+            post.delete()
+        }
+
 
     });
 
