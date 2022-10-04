@@ -147,15 +147,7 @@ new utilities.express.Service(tagLabel)
                     'preserveNullAndEmptyArrays': true
                 }
             },
-            {
-                '$replaceRoot': {
-                    'newRoot': {
-                        '$mergeObjects': [
-                            '$$ROOT', '$hunter'
-                        ]
-                    }
-                }
-            },
+
             {
                 '$set': {
                     'likes': {
