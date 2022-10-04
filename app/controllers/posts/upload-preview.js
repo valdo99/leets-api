@@ -160,5 +160,7 @@ new utilities.express.Service(tagLabel)
             model: "Artist"
         })
 
-        res.resolve(newPost)
+        res.resolve(newPost);
+
+
     });

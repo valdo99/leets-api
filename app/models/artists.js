@@ -37,6 +37,10 @@ const ArtistSchema = new mongoose.Schema(
         topCities: {
             type: Array
         },
+        uploaded: {
+            type: Boolean,
+            default: false
+        }
 
     },
     {
