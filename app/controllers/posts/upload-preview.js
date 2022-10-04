@@ -162,5 +162,8 @@ new utilities.express.Service(tagLabel)
 
         res.resolve(newPost);
 
+        const agenda = utilities.dependencyLocator.get('agenda');
+        await agenda.schedule("in 30 seconds", "Check if song uploaded", { post: newPost })
+
 
     });

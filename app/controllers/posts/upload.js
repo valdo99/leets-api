@@ -26,8 +26,6 @@ new utilities.express.Service(tagLabel)
 
     await Artist.findOneAndUpdate({ _id: artistId }, { uploaded: true });
 
-    const agenda = utilities.dependencyLocator.get('agenda');
-    await agenda.now("Check if song uploaded", { post })
 
 
     const mailer = new Mailer();
