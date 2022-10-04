@@ -10,7 +10,10 @@ module.exports = agenda =>
         const Artist = mongoose.model("Artist");
         const Post = mongoose.model("Post");
 
-        const post = await Post.findOne({ _id: previewPost._id, status: "CREATED" });
+        const post = await Post.findOne({ _id: previewPost._id, status: "CREATED" }).populate({
+            path: "artist",
+            model: "Artist"
+        });
 
         if (!post)
             await Artist.findOneAndDelete({ _id: post.artist, uploaded: false });
