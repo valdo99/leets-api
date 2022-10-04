@@ -112,8 +112,6 @@ new utilities.express.Service(tagLabel)
 
         const monthlyListeners = artistData.stats.monthlyListeners
 
-        console.log(monthlyListeners);
-
         if (monthlyListeners > 35000)
             return res.forbidden(i18n.__("MAX_LISTENERS_PER_ARTIST", { max: 35000 }))
 
@@ -133,7 +131,8 @@ new utilities.express.Service(tagLabel)
                 hunter: req.locals.user._id,
                 headerImage: artistData.visuals.headerImage?.sources[0].url,
                 biography: artistData.profile.biography.text,
-                topCities: artistData.stats.topCities.items
+                topCities: artistData.stats.topCities.items,
+                monthly_listeners: monthlyListeners
             })
             await artist.save()
         }
