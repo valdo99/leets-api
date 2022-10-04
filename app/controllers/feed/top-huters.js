@@ -8,7 +8,7 @@ const tagLabel = "feedController";
 new utilities.express.Service(tagLabel)
     .isGet()
     .isPublic()
-    .respondsAt('/feed/top-hunters')
+    .respondsAt('/users/top-hunters')
     .controller(async (req, res) => {
 
         const feed = await Posts.aggregate(
