@@ -2,13 +2,13 @@ const moment = require('moment');
 const mongoose = require('mongoose');
 const Posts = mongoose.model("Post");
 
-const tagLabel = "feedController";
+const tagLabel = "top-hunters-Controller";
 
 
 new utilities.express.Service(tagLabel)
     .isGet()
     .isPublic()
-    .respondsAt('/users/top-hunters')
+    .respondsAt('/users/feed/top-hunters')
     .controller(async (req, res) => {
 
         const feed = await Posts.aggregate(
