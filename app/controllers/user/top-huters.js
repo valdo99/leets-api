@@ -95,7 +95,7 @@ new utilities.express.Service(tagLabel)
                     $group: {
                         '_id': '$hunter',
                         points: {
-                            $avg: "$likes"
+                            $sum: "$likes"
                         }
 
                     }
