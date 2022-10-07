@@ -19,14 +19,29 @@ new utilities.express.Service(tagLabel)
     if (!post)
       return res.forbidden(i18n.__("PREVIEW_NOT_UPLOADED"))
 
-    post.status = "ONLINE";
-    const artistId = post.artist._id
+    const artistId = post.artist.spotify_id
 
+
+    if (!post.artist.hunter) {
+      const { getArtist } = utilities.dependencyLocator.get('spotify');
+      const artistData = await getArtist(artistId);
+      const monthlyListeners = artistData.stats.monthlyListeners
+      await Artist.findOneAndUpdate({ _id: post.artist._id }, {
+        hunter: req.locals.user._id,
+        headerImage: artistData?.visuals?.headerImage?.sources[0].url,
+        biography: artistData?.profile?.biography?.text,
+        topCities: artistData?.stats?.topCities?.items,
+        monthly_listeners: monthlyListeners
+      });
+    }
+
+    post.status = "ONLINE";
     await post.save();
 
-    await Artist.findOneAndUpdate({ _id: artistId }, { uploaded: true });
-
-
+    await post.populate({
+      path: "artist",
+      model: "Artist"
+    })
 
     const mailer = new Mailer();
     await mailer.setTemplate(api.config.email.templates.songUploaded)

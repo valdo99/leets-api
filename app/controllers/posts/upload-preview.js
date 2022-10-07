@@ -128,11 +128,11 @@ new utilities.express.Service(tagLabel)
                 image: artistData.visuals.avatarImage?.sources[0].url,
                 followers: artistFollowers.total,
                 spotify_id: artistId,
-                hunter: req.locals.user._id,
-                headerImage: artistData.visuals.headerImage?.sources[0].url,
-                biography: artistData.profile.biography.text,
-                topCities: artistData.stats.topCities.items,
-                monthly_listeners: monthlyListeners
+                // hunter: req.locals.user._id,
+                // headerImage: artistData.visuals.headerImage?.sources[0].url,
+                // biography: artistData.profile.biography.text,
+                // topCities: artistData.stats.topCities.items,
+                // monthly_listeners: monthlyListeners
             })
             await artist.save()
         }
@@ -160,9 +160,4 @@ new utilities.express.Service(tagLabel)
         })
 
         res.resolve(newPost);
-
-        const agenda = utilities.dependencyLocator.get('agenda');
-        await agenda.schedule("in 50 seconds", "Check if song uploaded", { post: newPost })
-
-
     });
