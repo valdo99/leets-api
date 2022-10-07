@@ -2,13 +2,13 @@ require('dotenv').config();
 
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
-const moment= require('moment');
+const moment = require('moment');
 
 const { ForbiddenError } = api.customErrors;
 
 const ROUNDS = 10;
 
-const PASSWORD_REGEX = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
+const PASSWORD_REGEX = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$";
 const resetPasswordProcessDuration = 15 * 60;
 
 
@@ -16,11 +16,11 @@ const otp = require("../utils/otp");
 
 
 
-module.exports= (schema, options = {}) => {
+module.exports = (schema, options = {}) => {
 
     schema.add({
-        hashPassword:{
-            type:String,
+        hashPassword: {
+            type: String,
         },
         resetPassword: {
             otp: {
@@ -80,15 +80,15 @@ module.exports= (schema, options = {}) => {
         if (!validLogin) {
             return Promise.reject(new ForbiddenError(i18n.__("INVALID_LOGIN_CREDENTIALS")));
         }
-        
+
 
         const token = jwt.sign(this.getPublicFields(), process.env.JWT_KEY);
 
-        return Promise.resolve({token, isAdmin: this.isAdmin});
+        return Promise.resolve({ token, isAdmin: this.isAdmin });
 
     };
 
-    schema.methods.startResetPasswordProcess = function() {
+    schema.methods.startResetPasswordProcess = function () {
 
         this.resetPassword = {
             otp: otp.generate(6, { specialChars: false, upperCase: false }),
