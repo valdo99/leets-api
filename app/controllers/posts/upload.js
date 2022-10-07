@@ -11,7 +11,7 @@ new utilities.express.Service(tagLabel)
   .controller(async (req, res) => {
     const { id } = req.body;
 
-    const post = await Post.findOne({ spotify_id: id, status: "CREATED", hunter: req.locals.user._id }).populate({
+    const post = await Post.findOne({ spotify_id: id, status: "CREATED" }).populate({
       path: "artist",
       model: "Artist"
     })
@@ -21,6 +21,10 @@ new utilities.express.Service(tagLabel)
 
     const artistId = post.artist.spotify_id
 
+    post.status = "ONLINE";
+    post.hunter = req.locals.user._id
+
+    await post.save();
 
     if (!post.artist.hunter) {
       const { getArtist } = utilities.dependencyLocator.get('spotify');
@@ -35,10 +39,7 @@ new utilities.express.Service(tagLabel)
       });
     }
 
-    post.status = "ONLINE";
-    post.hunter = req.locals.user._id
 
-    await post.save();
 
     await post.populate({
       path: "artist",
