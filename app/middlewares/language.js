@@ -5,7 +5,7 @@ const tagLabel = 'acceptLanguageMiddleware';
 module.exports = async (req, res, next) => {
     try {
 
-        let lan = req.headers['accept-language'];
+        let lan = req.headers['x-accpet-language'];
 
         if (!lan)
             return next();
