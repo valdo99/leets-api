@@ -36,6 +36,8 @@ new utilities.express.Service(tagLabel)
     }
 
     post.status = "ONLINE";
+    post.hunter = req.locals.user._id
+
     await post.save();
 
     await post.populate({

@@ -89,11 +89,13 @@ new utilities.express.Service(tagLabel)
         const { id } = req.body;
 
 
-        const existingPost = await Post.findOne({ spotify_id: id, status: { $in: ["UPLOADED", "ONLINE"] } })
+        const existingPost = await Post.findOne({ spotify_id: id })
 
+        if (existingPost && ["UPLOADED", "ONLINE"].includes(existingPost.satus))
+            return res.forbidden(i18n.__("SONG_ALREADY_UPLOADED"))
 
         if (existingPost) {
-            return res.forbidden(i18n.__("SONG_ALREADY_UPLOADED"))
+            return existingPost
         }
 
 
@@ -150,7 +152,6 @@ new utilities.express.Service(tagLabel)
             image: postImage,
             preview_url,
             spotify_id: id,
-            hunter: req.locals.user._id,
             artist: artist._id.toString(),
             playcount,
             uploadedAt: albumOfTrack.date.isoString
