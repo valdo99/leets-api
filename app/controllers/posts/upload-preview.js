@@ -95,7 +95,7 @@ new utilities.express.Service(tagLabel)
             return res.forbidden(i18n.__("SONG_ALREADY_UPLOADED"))
 
         if (existingPost) {
-            return existingPost
+            return res.resolve(existingPost);
         }
 
 
