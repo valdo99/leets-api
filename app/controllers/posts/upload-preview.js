@@ -91,9 +91,11 @@ new utilities.express.Service(tagLabel)
 
         const existingPost = await Post.findOne({ spotify_id: id, status: { $in: ["UPLOADED", "ONLINE"] } })
 
+
         if (existingPost) {
-            return res.forbidden("Track già caricato.")
+            return res.forbidden(i18n.__("SONG_ALREADY_UPLOADED"))
         }
+
 
         const { name: title, preview_url, artists, album } = await getTrackData({ id, token })
 
