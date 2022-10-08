@@ -10,7 +10,7 @@ new utilities.express.Service(tagLabel)
     .isPublic()
     .respondsAt('/auth/confirm-email')
     .controller(async (req, res) => {
-        const {email, otp} = req.query;
+        const { email, otp } = req.query;
 
         console.log(email, otp);
 
@@ -19,16 +19,21 @@ new utilities.express.Service(tagLabel)
 
         const user = await Users.findOne({
             email: email.toLowerCase(),
-            'emailConfirmation.confirmed': false,
-            'emailConfirmation.otp': otp,
         });
 
         if (!user)
             return res.forbidden(i18n.__('USER_NOT_FOUND_OR_WRONG_OTP'));
-        
-        user.emailConfirmation.confirmed = true;
-        
-        await user.save();
+
+        if (user.emailConfirmation.otp !== otp)
+            return res.forbidden(i18n.__('USER_NOT_FOUND_OR_WRONG_OTP'));
+
+        if (user.emailConfirmation.otp === otp) {
+            user.emailConfirmation.confirmed = true;
+            await user.save();
+        }
+
+
+
 
         const token = jwt.sign(user.getPublicFields(), process.env.JWT_KEY);
 
