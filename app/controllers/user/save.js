@@ -5,6 +5,9 @@ const Mailer = require('../../services/mailer');
 
 const Users = mongoose.model('User');
 
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+}
 
 const tagLabel = "userSaveController";
 
@@ -38,7 +41,7 @@ new utilities.express.Service(tagLabel)
             name,
             surname,
             email,
-            username: username.toLowerCase()
+            username: replaceAll(username.toLowerCase().trim(), " ", "")
         });
 
         if (!(await user.isPasswordCompliant(password))) {
