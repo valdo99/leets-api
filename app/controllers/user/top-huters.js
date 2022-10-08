@@ -116,7 +116,7 @@ new utilities.express.Service(tagLabel)
                     }
                 },
                 {
-                    "$limit": 5
+                    "$limit": 20
                 }
             ]
         )
