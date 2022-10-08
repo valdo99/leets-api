@@ -112,7 +112,8 @@ new utilities.express.Service(tagLabel)
                 },
                 {
                     "$sort": {
-                        points: -1
+                        points: -1,
+                        createdAt: 1
                     }
                 },
                 {
