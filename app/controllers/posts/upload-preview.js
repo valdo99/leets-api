@@ -89,7 +89,10 @@ new utilities.express.Service(tagLabel)
         const { id } = req.body;
 
 
-        const existingPost = await Post.findOne({ spotify_id: id })
+        const existingPost = await Post.findOne({ spotify_id: id }).populate({
+            path:"artist",
+            model:"Artist"
+        });
 
         if (existingPost && ["UPLOADED", "ONLINE"].includes(existingPost.status))
             return res.forbidden(i18n.__("SONG_ALREADY_UPLOADED"))
