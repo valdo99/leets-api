@@ -59,7 +59,7 @@ new utilities.express.Service(tagLabel)
 
         const { page = 0, limit = 20, date = new Date() } = req.query;
 
-        const query =             [
+        const query = [
             {
                 '$match': {
                     'status': 'ONLINE'
@@ -228,7 +228,8 @@ new utilities.express.Service(tagLabel)
                     "partialLikes": -1,
                     createdAt: -1
                 }
-            }, {
+            },
+            {
                 "$skip": page * limit
             },
             {
@@ -239,12 +240,11 @@ new utilities.express.Service(tagLabel)
         const feed = await Posts.aggregate(query)
 
         res.setPagination({
-            total: await Posts.countDocuments(query),
+            total: await Posts.countDocuments({ status: "ONLINE" }),
             perPage: PER_PAGE,
             page
         });
 
         return res.resolve(feed);
-
 
     });
