@@ -21,9 +21,9 @@
   "CHANGE_PASSWORD_OPERATION_WRONG_OTP":"OTP errato, hai ancora {{remainingAttempts}} tentativi prima che il tuo account venga bloccato",
   "FORM_PASSWORD_IS_WEAK":"La password deve contenere almeno 8 caratteri di cui: 1 numero, 1 lettera maiuscola, 1 lettera minuscola, un carattere speciale",
   "INVALID_CURRENT_PASSWORD":"Password non corretta",
-  "MAX_SONGS_PER_ARTIST_REACHED":"Non si possono caricare più di {{max}} canzoni per artista per mese.",
+  "MAX_SONGS_PER_ARTIST_REACHED":"Il massimo di {{max}} canzoni per artista alla settimana é stato raggiunto",
   "PREVIEW_NOT_UPLOADED":"Non hai mai creato una preview del brano.",
   "USERNAME_ALREADY_IN_USE":"Username di già in uso",
-  "MAX_LISTENERS_PER_ARTIST":"Non puoi caricare questa canzone, l'artista non puo avere piu di {{max}} ascolti",
-  "SONG_ALREADY_UPLOADED": "Canzone già pubblicata."
+  "MAX_LISTENERS_PER_ARTIST":"Le canzoni devono essere di artisti che hanno meno {{max}} ascoltatori mensili",
+  "SONG_ALREADY_UPLOADED": "Questa canzone é già stata pubblicata."
   }

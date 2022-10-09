@@ -19,12 +19,12 @@
     "EXISTENT_RESET_PASSWORD_PROCESS":"Processo di recupero password già attivo, controlla la mail oppure riprova piu tardi",
     "WAIT_BEFORE_NEW_CONFIRMATION_EMAIL":"Email di conferma già inviata, per una nuova email riprova piu tardi.",
     "CHANGE_PASSWORD_OPERATION_WRONG_OTP":"OTP errato, hai ancora {{remainingAttempts}} tentativi prima che il tuo account venga bloccato",
-    "FORM_PASSWORD_IS_WEAK":"La password deve contenere almeno 8 caratteri di cui: 1 numero, 1 lettera maiuscola, 1 lettera minuscola, un carattere speciale",
-    "INVALID_CURRENT_PASSWORD":"Password non corretta",
-    "MAX_SONGS_PER_ARTIST_REACHED":"Non si possono caricare più di {{max}} canzoni per artista per mese.",
-    "PREVIEW_NOT_UPLOADED":"Non hai mai creato una preview del brano.",
-    "USERNAME_ALREADY_IN_USE":"Username di già in uso",
-    "MAX_LISTENERS_PER_ARTIST":"Non puoi caricare questa canzone, l'artista non puo avere piu di {{max}} ascolti",
-    "SONG_ALREADY_UPLOADED": "Song already uploaded."
+    "FORM_PASSWORD_IS_WEAK":"Password must be at least 8 characters long and have at least 1 digit, 1 lowercase letter, 1 uppercase letter and 1 special character",
+    "INVALID_CURRENT_PASSWORD":"Password is incorrect",
+    "MAX_SONGS_PER_ARTIST_REACHED":"The maximum of {{max}} songs per artist per week has been reached",
+    "PREVIEW_NOT_UPLOADED":"You haven't created a preview of the song",
+    "USERNAME_ALREADY_IN_USE":"Username is already taken",
+    "MAX_LISTENERS_PER_ARTIST":"Songs must be by artists who have less than {{max}} monthly listeners",
+    "SONG_ALREADY_UPLOADED": "This song has already been uploaded."
 
 }
