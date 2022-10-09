@@ -91,7 +91,7 @@ new utilities.express.Service(tagLabel)
 
         const existingPost = await Post.findOne({ spotify_id: id })
 
-        if (existingPost && ["UPLOADED", "ONLINE"].includes(existingPost.satus))
+        if (existingPost && ["UPLOADED", "ONLINE"].includes(existingPost.status))
             return res.forbidden(i18n.__("SONG_ALREADY_UPLOADED"))
 
         if (existingPost) {
