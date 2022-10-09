@@ -57,7 +57,13 @@ new utilities.express.Service(tagLabel)
 
         await setContextIfUserLogged(req);
 
-        const { page = 0, limit = 20, date = new Date() } = req.query;
+        const { date = new Date() } = req.query;
+
+        let page = parseInt(req.query.page);
+        if (isNaN(page)) page = 0;
+
+        let limit = parseInt(req.query.limit);
+        if (isNaN(limit)) limit = PER_PAGE;
 
         const query = [
             {
@@ -241,7 +247,7 @@ new utilities.express.Service(tagLabel)
 
         res.setPagination({
             total: await Posts.countDocuments({ status: "ONLINE" }),
-            perPage: PER_PAGE,
+            perPage: limit,
             page
         });
 
