@@ -7,7 +7,7 @@ const moment = require('moment');
 
 const tagLabel = "uploadSpotifyLinkProtectedController";
 
-const MAX_SONGS_PER_ARTIST_PER_MONTH = 3
+const MAX_SONGS_PER_ARTIST_PER_WEEK = 5
 
 var authOptions = {
     url: "https://accounts.spotify.com/api/token",
@@ -81,13 +81,16 @@ const getArtistData = async ({ token, id }) => {
 
 }
 
+const getSongsByArtistInLastWeek = async (artistId) => {
+    return await Post.find({ artist: artistId, status: "ONLINE", createdAt: { $gte: new Date(moment().subtract(1, "week")) } })
+}
+
 new utilities.express.Service(tagLabel)
     .isPost()
     .respondsAt('/posts/upload/preview')
     .controller(async (req, res) => {
         const token = await getToken();
         const { id } = req.body;
-
 
         const existingPost = await Post.findOne({ spotify_id: id }).populate({
             path:"artist",
@@ -98,12 +101,16 @@ new utilities.express.Service(tagLabel)
             return res.forbidden(i18n.__("SONG_ALREADY_UPLOADED"))
 
         if (existingPost) {
+            // Check max number of weekly songs for the artists hasn't been reached
+            const artistPosts = await getSongsByArtistInLastWeek(existingPost.artist._id);
+            if (artistPosts.length >= MAX_SONGS_PER_ARTIST_PER_WEEK) {
+                return res.forbidden(i18n.__("MAX_SONGS_PER_ARTIST_REACHED", { max: MAX_SONGS_PER_ARTIST_PER_WEEK }))
+            }    
             return res.resolve(existingPost);
         }
 
 
         const { name: title, preview_url, artists, album } = await getTrackData({ id, token })
-
 
         const {
             name: artistName,
@@ -144,10 +151,11 @@ new utilities.express.Service(tagLabel)
             await artist.save()
         }
 
-        const artistPosts = await Post.find({ artist: artist._id, createdAt: { $gte: new Date(moment().subtract(1, "months")) } })
+        // Check max number of weekly songs for the artists hasn't been reached
+        const artistPosts = await getSongsByArtistInLastWeek(artist._id);
 
-        if (artistPosts.length > MAX_SONGS_PER_ARTIST_PER_MONTH) {
-            return res.forbidden(i18n.__("MAX_SONGS_PER_ARTIST_REACHED", { max: MAX_SONGS_PER_ARTIST_PER_MONTH }))
+        if (artistPosts.length >= MAX_SONGS_PER_ARTIST_PER_WEEK) {
+            return res.forbidden(i18n.__("MAX_SONGS_PER_ARTIST_REACHED", { max: MAX_SONGS_PER_ARTIST_PER_WEEK }))
         }
 
         const newPost = new Post({
