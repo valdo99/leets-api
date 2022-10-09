@@ -46,6 +46,10 @@ new utilities.express.Service(tagLabel)
       model: "Artist"
     })
 
+    if (process.env.NODE_ENV === "DEV") {
+      return res.resolve(post)
+    }
+
     const mailer = new Mailer();
     await mailer.setTemplate(api.config.email.templates.songUploaded)
       .to(req.locals.user.name, req.locals.user.email)
