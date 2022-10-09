@@ -2,7 +2,7 @@
     "MISSING_CONSENSUS": "Terms and conditions are mandatory",
     "PASSWORD_NOT_COMPLIANT": "Password should contain at least 8 characters of wich : 1 number, 1 uppercase letter, 1 lowercase letter, 1 special character",
     "FORM_PASSWORDS_DO_NOT_MATCH": "Passwords should match",
-    "INVALID_LOGIN_CREDENTIALS": "Wrong credentials",
+    "INVALID_LOGIN_CREDENTIALS": "User not registered",
     "FORM_ERROR_INVALID_DATE_FORMAT": "Date of invalid format",
     "UNDERAGE_USER": "You need to be at least 18 yo",
     "FORM_ERROR_EMAIL_IN_USE": "Email already in use",

@@ -2,7 +2,7 @@
   "MISSING_CONSENSUS": "Termini e condizioni obbligatori",
   "PASSWORD_NOT_COMPLIANT": "La password deve contenere almeno 8 caratteri di cui: 1 numero, 1 lettera maiuscola, 1 lettera minuscola, un carattere speciale",
   "FORM_PASSWORDS_DO_NOT_MATCH": "Le password devono combaciare",
-  "INVALID_LOGIN_CREDENTIALS": "Credenziali di accesso non corrette",
+  "INVALID_LOGIN_CREDENTIALS": "Utente non registrato",
   "FORM_ERROR_INVALID_DATE_FORMAT": "Data in formato non valido",
   "UNDERAGE_USER": "Devi essere maggiorenne",
   "FORM_ERROR_EMAIL_IN_USE": "Email già registrata",
