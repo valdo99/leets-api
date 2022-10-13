@@ -130,7 +130,11 @@ new utilities.express.Service(tagLabel)
             return res.forbidden(i18n.__("MAX_LISTENERS_PER_ARTIST", { max: 35000 }))
 
 
-        const postImage = album.images[0].url
+        let postImage = album.images[0].url
+
+        const high_quality_image = album.images.filter(el => el.height === 640)
+        if (high_quality_image.length)
+            postImage = high_quality_image[0].url
 
         let artist;
 
