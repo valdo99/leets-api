@@ -56,7 +56,10 @@ ArtistSchema.plugin(publicFields, [
     "name",
     "image",
     "followers",
-    "monthly_listeners"
+    "monthly_listeners",
+    "topCities",
+    "headerImage",
+    "biography"
 ]);
 
 
