@@ -11,9 +11,7 @@ new utilities.express.Service(tagLabel)
     .isPublic()
     .controller(async (req, res) => {
 
-        const artist = await Artist.findOne({
-            artist: req.params.id,
-        }).populate(["hunter"])
+        const artist = await Artist.findById(req.params.id).populate(["hunter"])
 
         if (!artist) {
             return res.notFound(i18n.__("USER_NOT_FOUND"));
