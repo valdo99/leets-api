@@ -35,7 +35,8 @@ new utilities.express.Service(tagLabel)
         headerImage: artistData?.visuals?.headerImage?.sources[0].url,
         biography: artistData?.profile?.biography?.text,
         topCities: artistData?.stats?.topCities?.items,
-        monthly_listeners: monthlyListeners
+        monthly_listeners: monthlyListeners,
+        createdAt: new Date()
       });
     }
 
