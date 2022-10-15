@@ -11,16 +11,16 @@ new utilities.express.Service(tagLabel)
     .respondsAt('/artists/:artist/total-likes')
     .controller(async (req, res) => {
 
-        console.log(req.params.artist);
 
         const feed = await Posts.aggregate(
             [
                 {
                     '$match': {
                         'status': 'ONLINE',
-                        'artist': req.params.artist
+                        'artist': mongoose.Types.ObjectId(req.params.artist)
                     }
-                }, {
+                },
+                {
                     '$lookup': {
                         'from': 'artists',
                         'localField': 'artist',
@@ -96,14 +96,15 @@ new utilities.express.Service(tagLabel)
                 },
                 {
                     $project: {
-                        likes: 1
+                        likes: 1,
+                        _id: 0
                     }
                 },
 
             ]
         )
 
-        return res.resolve(feed);
+        return res.resolve(feed[0]);
 
 
     });
