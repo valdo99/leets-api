@@ -1,15 +1,23 @@
 const moment = require('moment');
 const mongoose = require('mongoose');
 const Posts = mongoose.model("Post");
+const Artists = mongoose.model("Artist");
 
-const tagLabel = "top-hunters-Controller";
+const tagLabel = "top-artists-Controller";
 
+const PER_PAGE = 20;
 
 new utilities.express.Service(tagLabel)
     .isGet()
     .isPublic()
     .respondsAt('/artists/feed/top-artists')
     .controller(async (req, res) => {
+
+        let page = parseInt(req.query.page);
+        if (isNaN(page)) page = 0;
+
+        let limit = parseInt(req.query.limit);
+        if (isNaN(limit)) limit = PER_PAGE;
 
         const feed = await Posts.aggregate(
             [
@@ -116,10 +124,19 @@ new utilities.express.Service(tagLabel)
                     }
                 },
                 {
-                    "$limit": 20
+                    "$skip": page * limit
+                },
+                {
+                    "$limit": limit
                 }
             ]
         )
+
+        res.setPagination({
+            total: await Artists.countDocuments({ hunter: { $ne: null } }),
+            perPage: limit,
+            page
+        });
 
         return res.resolve(feed);
 

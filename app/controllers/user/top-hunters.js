@@ -1,8 +1,11 @@
-const moment = require('moment');
 const mongoose = require('mongoose');
 const Posts = mongoose.model("Post");
+const Users = mongoose.model("User");
 
 const tagLabel = "top-hunters-Controller";
+
+const PER_PAGE = 20;
+
 
 
 new utilities.express.Service(tagLabel)
@@ -10,6 +13,13 @@ new utilities.express.Service(tagLabel)
     .isPublic()
     .respondsAt('/users/feed/top-hunters')
     .controller(async (req, res) => {
+
+        let page = parseInt(req.query.page);
+        if (isNaN(page)) page = 0;
+
+        let limit = parseInt(req.query.limit);
+        if (isNaN(limit)) limit = PER_PAGE;
+
 
         const feed = await Posts.aggregate(
             [
@@ -117,10 +127,33 @@ new utilities.express.Service(tagLabel)
                     }
                 },
                 {
-                    "$limit": 20
+                    "$skip": page * limit
+                },
+                {
+                    "$limit": limit
                 }
             ]
         )
+
+        const usersHaveUploaded = await Posts.aggregate([
+            {
+                $match: {
+                    status: "ONLINE"
+                }
+            },
+            {
+                $group: {
+                    _id: "$hunter",
+
+                }
+            }
+        ])
+
+        res.setPagination({
+            total: usersHaveUploaded.length,
+            perPage: limit,
+            page
+        });
 
         return res.resolve(feed);
 
