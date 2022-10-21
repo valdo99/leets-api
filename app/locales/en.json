@@ -25,6 +25,7 @@
     "PREVIEW_NOT_UPLOADED":"You haven't created a preview of the song",
     "USERNAME_ALREADY_IN_USE":"Username is already taken",
     "MAX_LISTENERS_PER_ARTIST":"Songs must be by artists who have less than {{max}} monthly listeners",
-    "SONG_ALREADY_UPLOADED": "This song has already been uploaded."
+    "SONG_ALREADY_UPLOADED": "This song has already been uploaded.",
+    "USER_DIFFERENT_ORIGIN":"Signin with your email"
 
 }

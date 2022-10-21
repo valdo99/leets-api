@@ -25,5 +25,7 @@
   "PREVIEW_NOT_UPLOADED":"Non hai mai creato una preview del brano.",
   "USERNAME_ALREADY_IN_USE":"Username di già in uso",
   "MAX_LISTENERS_PER_ARTIST":"Le canzoni devono essere di artisti che hanno meno {{max}} ascoltatori mensili",
-  "SONG_ALREADY_UPLOADED": "Questa canzone é già stata pubblicata."
+  "SONG_ALREADY_UPLOADED": "Questa canzone é già stata pubblicata.",
+  "USER_DIFFERENT_ORIGIN":"Utente già registrato con email, prova ad accedere usando la tua email"
+
   }

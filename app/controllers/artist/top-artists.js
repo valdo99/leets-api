@@ -14,10 +14,10 @@ new utilities.express.Service(tagLabel)
     .controller(async (req, res) => {
 
         let page = parseInt(req.query.page);
-        if (isNaN(page)) page = 0;
+        if (isNaN(page)) { page = 0; }
 
         let limit = parseInt(req.query.limit);
-        if (isNaN(limit)) limit = PER_PAGE;
+        if (isNaN(limit)) { limit = PER_PAGE; }
 
         const feed = await Posts.aggregate(
             [

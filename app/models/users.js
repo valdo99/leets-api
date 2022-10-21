@@ -8,20 +8,26 @@ const publicFields = require("../plugins/public-fields");
 const mongooseErrors = require("../utils/mongoose-errors");
 
 
+const ORIGIN = {
+    EMAIL: 1,
+    GOOGLE: 2
+}
+
+
 
 const UserSchema = new mongoose.Schema(
     {
         name: {
             type: String,
             required: [true, i18n.__("FIELD_REQUIRED")],
-            minLength: [1, i18n.__("STRING_AT_LEAST", {min: 1})],
-            maxLength: [50, i18n.__("STRING_AT_MUST", {max: 50})],
+            minLength: [1, i18n.__("STRING_AT_LEAST", { min: 1 })],
+            maxLength: [50, i18n.__("STRING_AT_MUST", { max: 50 })],
         },
         surname: {
             type: String,
             required: [true, i18n.__("FIELD_REQUIRED")],
-            minLength: [1, i18n.__("STRING_AT_LEAST", {min: 1})],
-            maxLength: [50, i18n.__("STRING_AT_MUST", {max: 50})],
+            minLength: [1, i18n.__("STRING_AT_LEAST", { min: 1 })],
+            maxLength: [50, i18n.__("STRING_AT_MUST", { max: 50 })],
         },
         email: {
             type: String,
@@ -31,8 +37,8 @@ const UserSchema = new mongoose.Schema(
             trim: true,
             validate: [validator.isEmail, i18n.__("FORM_ERROR_INVALID_EMAIL")],
         },
-        username:{
-            type:String,
+        username: {
+            type: String,
             required: [true, i18n.__("FIELD_REQUIRED")],
             unique: true,
             sparse: true,
@@ -41,7 +47,11 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
-       
+        origin: {
+            type: Number,
+            enum: [ORIGIN.EMAIL, ORIGIN.GOOGLE],
+            default: ORIGIN.EMAIL
+        },
     },
     {
         collection: "users",
@@ -50,9 +60,12 @@ const UserSchema = new mongoose.Schema(
     }
 );
 
+UserSchema.statics.ORIGIN_EMAIL = ORIGIN.EMAIL;
+UserSchema.statics.ORIGIN_GOOGLE = ORIGIN.GOOGLE;
+
 
 UserSchema.methods.getFullName = function () {
-    return this.name + " " + this.surname;
+    return `${this.name} ${this.surname}`;
 };
 
 

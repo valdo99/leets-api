@@ -52,7 +52,7 @@ module.exports = (schema, options = {}) => {
 
     });
     schema.methods.isPasswordCompliant = (password) => {
-        return !!password.match(PASSWORD_REGEX);
+        return password.match(PASSWORD_REGEX);
     };
 
     schema.methods.setPassword = async function (rawPassword) {
@@ -63,7 +63,7 @@ module.exports = (schema, options = {}) => {
 
     schema.methods.isPasswordValid = async function (rawPassword) {
 
-        if (!rawPassword) return false;
+        if (!rawPassword) { return false; }
 
         return await bcrypt.compare(rawPassword, this.hashPassword);
 
@@ -72,8 +72,9 @@ module.exports = (schema, options = {}) => {
     schema.methods.login = async function (rawPassword, hashPassword) {
 
 
-        if (!rawPassword)
+        if (!rawPassword) {
             return Promise.reject("The user is missing the password");
+        }
 
         const validLogin = await bcrypt.compare(rawPassword, hashPassword);
 
