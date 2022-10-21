@@ -1,23 +1,20 @@
-const tagLabel = 'checkIfSongUploadedJob';
+const tagLabel = "checkIfSongUploadedJob";
 
-module.exports = agenda =>
+module.exports = (agenda) =>
+	agenda.define("Check if song uploaded", { concurrency: 10 }, async (job) => {
+		const { post: previewPost } = job.attrs.data;
 
-    agenda.define('Check if song uploaded', { concurrency: 10 }, async job => {
+		const mongoose = require("mongoose");
+		const Artist = mongoose.model("Artist");
+		const Post = mongoose.model("Post");
 
-        const { post: previewPost } = job.attrs.data;
+		const post = await Post.findOne({
+			_id: previewPost._id,
+			status: "CREATED",
+		});
 
-        const mongoose = require('mongoose');
-        const Artist = mongoose.model("Artist");
-        const Post = mongoose.model("Post");
-
-        const post = await Post.findOne({ _id: previewPost._id, status: "CREATED" })
-
-        if (post) {
-            await Artist.findOneAndDelete({ _id: post.artist, uploaded: false });
-            post.delete()
-        }
-
-
-    });
-
-
+		if (post) {
+			await Artist.findOneAndDelete({ _id: post.artist, uploaded: false });
+			post.delete();
+		}
+	});

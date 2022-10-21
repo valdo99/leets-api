@@ -1,28 +1,24 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const Users = mongoose.model('User');
-const Posts = mongoose.model('Post');
-
+const Users = mongoose.model("User");
+const Posts = mongoose.model("Post");
 
 const tagLabel = "userReadPublicController";
 
 new utilities.express.Service(tagLabel)
-    .isGet()
-    .respondsAt('/users/:username')
-    .isPublic()
-    .controller(async (req, res) => {
+	.isGet()
+	.respondsAt("/users/:username")
+	.isPublic()
+	.controller(async (req, res) => {
+		const user = await Users.findOne({
+			username: req.params.username,
+			"emailConfirmation.confirmed": true,
+			// emailConfirmation: { confirmed: true }
+		}).select("_id username createdAt name surname");
 
-        const user = await Users.findOne({
-            username: req.params.username,
-            "emailConfirmation.confirmed": true
-            // emailConfirmation: { confirmed: true }
-        }).select("_id username createdAt name surname");
+		if (!user) {
+			return res.notFound(i18n.__("USER_NOT_FOUND"));
+		}
 
-        if (!user) {
-            return res.notFound(i18n.__("USER_NOT_FOUND"));
-        }
-
-
-        res.resolve(user);
-
-    });
+		res.resolve(user);
+	});

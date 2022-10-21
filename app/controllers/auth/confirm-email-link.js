@@ -1,43 +1,43 @@
-const mongoose = require('mongoose');
-const Users = mongoose.model('User');
+const mongoose = require("mongoose");
+const Users = mongoose.model("User");
 const jwt = require("jsonwebtoken");
-
 
 const tagLabel = "confirmEmailController";
 
 new utilities.express.Service(tagLabel)
-    .isGet()
-    .isPublic()
-    .respondsAt('/auth/confirm-email')
-    .controller(async (req, res) => {
-        const { email, otp } = req.query;
+	.isGet()
+	.isPublic()
+	.respondsAt("/auth/confirm-email")
+	.controller(async (req, res) => {
+		const { email, otp } = req.query;
 
-        console.log(email, otp);
+		console.log(email, otp);
 
-        if (!email) return res.forbidden(i18n.__('EMAIL_MISSING'));
-        if (!otp) return res.forbidden(i18n.__('OTP_MISSING'));
+		if (!email) {
+			return res.forbidden(i18n.__("EMAIL_MISSING"));
+		}
+		if (!otp) {
+			return res.forbidden(i18n.__("OTP_MISSING"));
+		}
 
-        const user = await Users.findOne({
-            email: email.toLowerCase(),
-        });
+		const user = await Users.findOne({
+			email: email.toLowerCase(),
+		});
 
-        if (!user)
-            return res.forbidden(i18n.__('USER_NOT_FOUND_OR_WRONG_OTP'));
+		if (!user) {
+			return res.forbidden(i18n.__("USER_NOT_FOUND_OR_WRONG_OTP"));
+		}
 
-        if (user.emailConfirmation.otp !== otp)
-            return res.forbidden(i18n.__('USER_NOT_FOUND_OR_WRONG_OTP'));
+		if (user.emailConfirmation.otp !== otp) {
+			return res.forbidden(i18n.__("USER_NOT_FOUND_OR_WRONG_OTP"));
+		}
 
-        if (user.emailConfirmation.otp === otp) {
-            user.emailConfirmation.confirmed = true;
-            await user.save();
-        }
+		if (user.emailConfirmation.otp === otp) {
+			user.emailConfirmation.confirmed = true;
+			await user.save();
+		}
 
+		const token = jwt.sign(user.getPublicFields(), process.env.JWT_KEY);
 
-
-
-        const token = jwt.sign(user.getPublicFields(), process.env.JWT_KEY);
-
-        return res.redirect(`${process.env.APP_URL}/confirm-email?jwt=${token}`);
-
-
-    });
+		return res.redirect(`${process.env.APP_URL}/confirm-email?jwt=${token}`);
+	});

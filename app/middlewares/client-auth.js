@@ -1,50 +1,45 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const httpContext = require("express-http-context");
 
 const jwt = require("jsonwebtoken");
 const Users = require("../models/users");
 
-const tagLabel  = 'userAuthMiddleware';
+const tagLabel = "userAuthMiddleware";
 
 module.exports = async (req, res, next) => {
+	try {
+		let token = req.headers["x-auth-token"];
+		if (typeof token !== "string" || token === "") { return res.unauthorized(); }
 
-    try {
+		let decodedUser;
 
-        let token = req.headers['x-auth-token'];
-        if (typeof token !== 'string' || token === "")
-            return res.unauthorized();
+		try {
+			decodedUser = jwt.verify(token, process.env.JWT_KEY);
+		} catch (error) {
+			return res.unauthorized();
+		}
 
-        let decodedUser;
+		if (!decodedUser) {
+			return res.unauthorized();
+		}
 
-        try {
-            decodedUser = jwt.verify(token, process.env.JWT_KEY);
-        } catch (error) {
-            return res.unauthorized();
-        }
+		const query = { _id: decodedUser._id };
 
-        if (!decodedUser) {
-            return res.unauthorized();
-        }
+		const user = await Users.findOne(query);
 
-        const query = { _id: decodedUser._id};
+		if (!user) { return res.unauthorized(); }
 
-        const user = await Users.findOne(query);
-
-        if (!user)
-            return res.unauthorized();
-        
-        req.locals.user = user;
-        httpContext.set("context", user);
-        return await httpContext.ns.runPromise(async () => {
-            next();
-        });
-    }
-    catch (error) {
-
-        res.apiErrorResponse(error);
-        utilities.logger.error('Cannot run client authentication', { tagLabel, error });
-
-    }
-
+		req.locals.user = user;
+		httpContext.set("context", user);
+		return await httpContext.ns.runPromise(async () => {
+			next();
+		});
+	} catch (error) {
+		res.apiErrorResponse(error);
+		utilities.logger.error("Cannot run client authentication", {
+			tagLabel,
+			error,
+		});
+	}
 };

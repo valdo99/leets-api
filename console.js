@@ -1,11 +1,11 @@
-process.name = 'clearconnecconsole';
+process.name = "clearconnecconsole";
 
-require('dotenv').config();
-require('./app/utils/i18n');
+require("dotenv").config();
+require("./app/utils/i18n");
 
-const term = require('terminal-kit').terminal;
-const appRoot = require('app-root-path').path;
-const fs = require('fs');
+const term = require("terminal-kit").terminal;
+const appRoot = require("app-root-path").path;
+const fs = require("fs");
 const glob = require("glob");
 
 term.clear();
@@ -13,125 +13,114 @@ term.clear();
 const menuItems = [];
 const scripts = [];
 
-term.white('bootstrapping app...').nextLine();
+term.white("bootstrapping app...").nextLine();
 
-require('./application-boot');
+require("./application-boot");
 
+(async () => {
+	term.white("connecting to database...").nextLine();
+	const dbConn = await require("./app/utils/db");
 
-(async ()=>{
+	fs.readdirSync(`${appRoot}/scripts`).map((file) => {
+		if (fs.lstatSync(`./scripts/${file}`).isDirectory()) {
+			return;
+		}
 
-    term.white('connecting to database...').nextLine();
-    const dbConn = await require('./app/utils/db');
+		let script;
+		try {
+			script = require(`./scripts/${file}`);
+		} catch (e) {
+			throw e;
+		}
 
-    fs.readdirSync(`${appRoot}/scripts`).map(file => {
+		menuItems.push(script.name);
+		scripts.push(script);
+	});
 
-        if(fs.lstatSync('./scripts/' + file).isDirectory())
-            return;
+	menuItems.push("[EXIT]");
+	scripts.push({ name: "[EXIT]", run: () => process.exit(0) });
 
-        let script;
-        try {
-            script = require('./scripts/' + file);
-        } catch(e) {
-            throw e;
-        }
+	term.clear();
 
-        menuItems.push(script.name);
-        scripts.push(script);
-    });
+	const patterns = [
+		"app/plugins/*.js",
+		"app/services/**/index.js",
+		"app/services/*.js",
+		"app/models/*.js",
+	];
 
-    menuItems.push('[EXIT]');
-    scripts.push({ name: '[EXIT]', run: () => process.exit(0) });
+	for (const pattern of patterns) {
+		try {
+			const files = glob.sync(pattern, null);
 
-    term.clear();
+			for (const filePath of files) {
+				require(`./${filePath}`);
+			}
+		} catch (error) {}
+	}
 
+	term.cyan("Commands available:").nextLine();
 
-    const patterns = [
-        "app/plugins/*.js",
-        "app/services/**/index.js",
-        "app/services/*.js",
-        "app/models/*.js"
-    ];
+	term.gridMenu(menuItems, async function (error, response) {
+		const script = scripts[response.selectedIndex];
+		const inputs = {};
 
-    for(const pattern of patterns) {
-        try {
-            const files = glob.sync(pattern, null);
+		term("\n").green("Running ").bold.green(script.name).nextLine();
 
-            for (const filePath of files) {
-                require("./" + filePath);
-            }
-        } catch (error) {
-            
-        }
+		if (Array.isArray(script.inputs)) {
+			for (let i = 0; i < script.inputs.length; i++) {
+				const input = script.inputs[i];
 
-    }
+				if (input.askIf && !Array.isArray(input.askIf)) {
+					input.askIf = [input.askIf];
+				}
 
+				if (
+					input.askIf &&
+					!input.askIf.find(
+						(askIf) => inputs[askIf.inputName] === askIf.equalTo,
+					)
+				) {
+					continue;
+				}
 
-    term.cyan('Commands available:').nextLine();
+				term.nextLine();
+				term.cyan.bold(`${input.name}?`);
 
-    term.gridMenu(menuItems, async function (error, response) {
+				if (input.type === "text") {
+					term.nextLine();
+					inputs[input.name] = await term.inputField({
+						autoComplete: input.autoComplete || [],
+						autoCompleteMenu: true,
+					}).promise;
+				} else if (input.type === "multiple") {
+					inputs[input.name] = (
+						await term.singleLineMenu(
+							typeof input.options === "function"
+								? await input.options()
+								: input.options,
+						).promise
+					).selectedText;
+				}
+			}
+		}
 
-        const script = scripts[response.selectedIndex];
-        const inputs = {};
+		term.nextLine().nextLine();
+		let watchdogTimer = killMeIn5();
 
-        term('\n').green("Running ").bold.green(script.name).nextLine();
-
-
-        if (Array.isArray(script.inputs)) {
-
-            for (let i = 0; i < script.inputs.length; i++) {
-
-                const input = script.inputs[i];
-
-                if(input.askIf && !Array.isArray(input.askIf))
-                    input.askIf = [input.askIf];
-
-                if(input.askIf && !input.askIf.find(askIf =>  inputs[askIf.inputName] === askIf.equalTo ))
-                    continue;
-
-                term.nextLine();
-                term.cyan.bold(input.name + '?');
-
-                if (input.type === 'text') {
-                    term.nextLine();
-                    inputs[input.name] = await term.inputField({ autoComplete: input.autoComplete || [], autoCompleteMenu: true }).promise;
-                }
-                else if (input.type === 'multiple') {
-
-                    inputs[input.name] = (await term
-                        .singleLineMenu(typeof input.options === 'function' ? await input.options() : input.options )
-                        .promise)
-                        .selectedText;
-                }
-
-
-            }
-
-        }
-
-        term.nextLine().nextLine();
-        let watchdogTimer = killMeIn5();
-
-        try {
-            await script.run(inputs, term, () => {
-                clearTimeout(watchdogTimer);
-                watchdogTimer = killMeIn5();
-            });
-        }
-        catch (e) {
-            console.log(e);
-        }
-
-
-
-    });
-
-
+		try {
+			await script.run(inputs, term, () => {
+				clearTimeout(watchdogTimer);
+				watchdogTimer = killMeIn5();
+			});
+		} catch (e) {
+			console.log(e);
+		}
+	});
 })();
 
-
-const killMeIn5 = () => setTimeout(() => {
-
-    console.log("Killed by watchdog...");
-    process.exit();
-
-}, 5000);
+const killMeIn5 = () =>
+	setTimeout(() => {
+		console.log("Killed by watchdog...");
+		process.exit();
+	}, 5000);

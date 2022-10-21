@@ -1,91 +1,87 @@
 function convertToCSV(arr) {
-    const array = [Object.keys(arr[0])].concat(arr);
+	const array = [Object.keys(arr[0])].concat(arr);
 
-    return array.map(it => {
-        return Object.values(it).toString();
-    }).join('\n');
+	return array
+		.map((it) => {
+			return Object.values(it).toString();
+		})
+		.join("\n");
 }
 
 module.exports = (req, res, next) => {
+	function prepare(data) {
+		if (data && typeof data.getPublicFields === "function") {
+			data = data.getPublicFields();
+		}
 
-    function prepare(data) {
-        if(data && typeof data.getPublicFields === 'function')
-            data = data.getPublicFields();
+		if (data && typeof data.toJSON === "function") { data = data.toJSON(); }
 
-        if(data && typeof data.toJSON === 'function')
-            data = data.toJSON();
+		if (data && typeof data === "object") {
+			data.__v = undefined;
+		}
 
-        if(data && typeof data === 'object') {
-            delete data.__v;
-        }
+		return data;
+	}
 
-        return data;
-    }
+	function getForm(code, payload = {}, message = "") {
+		let response = { code };
 
-    function getForm(code, payload = {}, message = "") {
+		if (Array.isArray(payload)) { payload = payload.map((row) => prepare(row)); }
+		else { payload = prepare(payload); }
 
-        let response = {code};
+		if (payload) { response.data = payload; }
+		if (message) { response.message = message; }
+		if (pagination) { response.pagination = pagination; }
 
-        if (Array.isArray(payload))
-            payload = payload.map(row => prepare(row));
-        else
-            payload = prepare(payload);
+		response.requestTime =
+			`${new Date().getTime() - req.locals.requestStart}ms`;
+		return res.status(code).json(response);
+	}
 
-        if(payload)
-            response.data = payload;
-        if(message)
-            response.message = message;
-        if(pagination)
-            response.pagination = pagination;
+	let pagination;
+	if (!req.locals) { req.locals = { enrich: {} }; }
 
-        response.requestTime = (new Date().getTime() - req.locals.requestStart) + "ms";
-        return res.status(code).json(response);
+	req.locals.requestStart = new Date().getTime();
 
-    }
+	res.setPagination = (p) => {
+		pagination = p;
+		return res;
+	};
 
-    let pagination;
-    if(!req.locals)
-        req.locals = {enrich: {}};
+	res.resolve = (payload) => getForm(200, payload);
+	res.resolveAsCSV = (payload) => {
+		res.header("Content-Type", "text/csv");
+		res.attachment("export.csv");
+		return res.send({ data: convertToCSV(payload) });
+	};
+	res.badRequest = (payload) => getForm(400, payload);
+	res.unauthorized = (message) => getForm(401, null, message);
+	res.forbidden = (message) => getForm(403, null, message);
+	res.conflict = (reason, message) => getForm(409, { reason }, message);
+	res.notFound = () => getForm(404, null, null);
+	res.applicationError = (message = null) => getForm(500, null, message);
+	res.tooManyRequests = (message) => getForm(429, null, message);
+	res.timeout = (message) => getForm(408, null, message);
+	res.unavailable = (message) => getForm(503, null, message);
+	res.aggregationResolve = (payload) => {
+		return res.status(200).json({ code: 200, ...payload });
+	};
+	res.apiErrorResponse = (error, ctrlName) => {
+		if (error && error.name === "ValidationError") {
+			return getForm(400, error.data);
+		}
 
-    req.locals.requestStart = new Date().getTime();
+		if (error && error.name === "ForbiddenError") {
+			return getForm(403, null, error.message);
+		}
 
-    res.setPagination = (p) => {
-        pagination = p;
-        return res;
-    };
+		if (error && error.name === "ConflictError") {
+			return getForm(409, { reason: error.reason });
+		}
 
+		utilities.logger.error("Controller crash", { tagLabel: ctrlName, error });
+		return getForm(500, null, null);
+	};
 
-    res.resolve = (payload) => getForm(200, payload);
-    res.resolveAsCSV = (payload) => {
-        res.header('Content-Type', 'text/csv');
-        res.attachment('export.csv');
-        return res.send({data:convertToCSV(payload)});
-    };
-    res.badRequest = (payload) => getForm(400, payload);
-    res.unauthorized = (message) => getForm(401, null, message);
-    res.forbidden = (message) => getForm(403, null, message);
-    res.conflict = (reason, message) => getForm(409, { reason }, message);
-    res.notFound = () => getForm(404, null, null);
-    res.applicationError = (message = null) => getForm(500, null, message);
-    res.tooManyRequests = (message) => getForm(429, null, message);
-    res.timeout = (message) => getForm(408, null, message);
-    res.unavailable = (message) => getForm(503, null, message);
-    res.aggregationResolve = (payload) => { return res.status(200).json({code: 200, ...payload}); };
-    res.apiErrorResponse = (error, ctrlName) => {
-
-        if(error && error.name === 'ValidationError')
-            return getForm(400, error.data);
-
-        if(error && error.name === 'ForbiddenError')
-            return getForm(403, null, error.message);
-
-        if (error && error.name === 'ConflictError')
-            return getForm(409, { reason: error.reason });
-
-        utilities.logger.error("Controller crash", { tagLabel: ctrlName, error });
-        return getForm(500, null, null);
-
-    };
-
-    next();
+	next();
 };

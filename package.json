@@ -7,7 +7,7 @@
     "dev": "pm2-dev api.js",
     "stop-dev": "pm2-dev stop api.js",
     "start": "node api.js",
-    "format":"rome format ."
+    "format":"rome format --write . "
   },
   "engines": {
     "node": "^14 || ^16"

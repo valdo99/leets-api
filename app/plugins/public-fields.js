@@ -1,9 +1,8 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-module.exports = (schema, fields=[]) => schema.methods.getPublicFields = function () {
+module.exports = (schema, fields = []) =>
+	(schema.methods.getPublicFields = function () {
+		fields = fields.concat(["updatedAt", "createdAt"]);
 
-    fields = fields.concat(['updatedAt', 'createdAt']);
-
-    return _.pick(this.toJSON(), fields);
-
-};
+		return _.pick(this.toJSON(), fields);
+	});
