@@ -23,9 +23,9 @@ new utilities.express.Service(tagLabel)
 			console.log("error ->", error);
 			return res.redirect(
 				process.env.APP_URL +
-					queryString.stringify({
-						error: "state_mismatch",
-					}),
+				queryString.stringify({
+					error: "state_mismatch",
+				}),
 			);
 		}
 
@@ -57,7 +57,7 @@ new utilities.express.Service(tagLabel)
 
 		if (user && user.origin === Users.statics.ORIGIN_EMAIL) {
 			return res.resolve(
-				+queryString.stringify({
+				queryString.stringify({
 					error: i18n.__("USER_DIFFERENT_ORIGIN"),
 				}),
 			);
