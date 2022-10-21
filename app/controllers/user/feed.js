@@ -1,53 +1,21 @@
 const moment = require("moment");
 const mongoose = require("mongoose");
 const Posts = mongoose.model("Post");
-const Users = mongoose.model("User");
 
-const httpContext = require("express-http-context");
-const jwt = require("jsonwebtoken");
 
 const tagLabel = "feedController";
 
 const PER_PAGE = 20;
 
-const setContextIfUserLogged = async (req) => {
-	try {
-		let token = req.headers["x-auth-token"];
+const authPublicRoute = utilities.dependencyLocator.get("authPublicRoute");
 
-		if (typeof token !== "string" || token === "") { return; }
-
-		let decodedUser;
-
-		try {
-			decodedUser = jwt.verify(token, process.env.JWT_KEY);
-		} catch (error) {
-			return;
-		}
-
-		if (!decodedUser) {
-			return;
-		}
-
-		const query = { _id: decodedUser._id };
-
-		const user = await Users.findOne(query);
-
-		if (!user) { return; }
-
-		req.locals.user = user;
-		httpContext.set("context", user);
-		return await httpContext.ns.runPromise(async () => { });
-	} catch (error) {
-		console.log(error);
-	}
-};
 
 new utilities.express.Service(tagLabel)
 	.isGet()
 	.isPublic()
 	.respondsAt("/posts/feed")
 	.controller(async (req, res) => {
-		await setContextIfUserLogged(req);
+		await authPublicRoute.setContext(req);
 
 		const { date = new Date() } = req.query;
 

@@ -3,49 +3,17 @@ const mongoose = require("mongoose");
 const Users = mongoose.model("User");
 const Likes = mongoose.model("Like");
 
-const httpContext = require("express-http-context");
-const jwt = require("jsonwebtoken");
 
 const tagLabel = "userLikesReadPublicController";
 
-const setContextIfUserLogged = async (req) => {
-	try {
-		let token = req.headers["x-auth-token"];
-
-		if (typeof token !== "string" || token === "") { return; }
-
-		let decodedUser;
-
-		try {
-			decodedUser = jwt.verify(token, process.env.JWT_KEY);
-		} catch (error) {
-			return;
-		}
-
-		if (!decodedUser) {
-			return;
-		}
-
-		const query = { _id: decodedUser._id };
-
-		const user = await Users.findOne(query);
-
-		if (!user) { return; }
-
-		req.locals.user = user;
-		httpContext.set("context", user);
-		return await httpContext.ns.runPromise(async () => { });
-	} catch (error) {
-		console.log(error);
-	}
-};
+const authPublicRoute = utilities.dependencyLocator.get("authPublicRoute");
 
 new utilities.express.Service(tagLabel)
 	.isGet()
 	.respondsAt("/users/:username/likes")
 	.isPublic()
 	.controller(async (req, res) => {
-		await setContextIfUserLogged(req);
+		await authPublicRoute.setContext(req);
 
 		const user = await Users.findOne({ username: req.params.username });
 		if (!user) {
