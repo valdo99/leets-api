@@ -9,6 +9,10 @@ function replaceAll(str, find, replace) {
 	return str.replace(new RegExp(find, "g"), replace);
 }
 
+const shuffled = (str) => str.split('').sort(function () {
+	return 0.5 - Math.random();
+}).join('');
+
 const tagLabel = "google-login-controller";
 
 new utilities.express.Service(tagLabel)
@@ -48,14 +52,12 @@ new utilities.express.Service(tagLabel)
 		});
 		const decodedUser = jwt.decode(data.id_token);
 
-		const access_token = data.access_token;
-		const refresh_token = data.refresh_token;
 
 		let user = await Users.findOne({
 			email: decodedUser.email,
 		});
 
-		if (user && user.origin === Users.statics.ORIGIN_EMAIL) {
+		if (user && user.origin === Users.ORIGIN_EMAIL) {
 			return res.resolve(
 				queryString.stringify({
 					error: i18n.__("USER_DIFFERENT_ORIGIN"),
@@ -64,12 +66,19 @@ new utilities.express.Service(tagLabel)
 		}
 
 		if (!user) {
+			let username = replaceAll(decodedUser.name.trim(), " ", "");
+
+			// ATTENTION -> this code can create false positives, can cause 500
+			if (await Users.isUsernameTaken(username)) {
+				username = `${username}${shuffled(decodedUser.at_hash).slice(-3)}`
+			}
+
 			const newUser = new Users({
 				email: decodedUser.email,
 				name: decodedUser.given_name,
 				surname: decodedUser.family_name,
-				origin: 2,
-				username: replaceAll(decodedUser.name.trim(), " ", ""),
+				origin: Users.ORIGIN_GOOGLE,
+				username: username,
 				emailConfirmation: {
 					confirmed: true,
 				},

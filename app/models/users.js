@@ -59,6 +59,12 @@ const UserSchema = new mongoose.Schema(
 UserSchema.statics.ORIGIN_EMAIL = ORIGIN.EMAIL;
 UserSchema.statics.ORIGIN_GOOGLE = ORIGIN.GOOGLE;
 
+UserSchema.statics.isUsernameTaken = async function (username) {
+	const user = await this.find({ username });
+	if (user) { return true }
+	return false;
+}
+
 UserSchema.methods.getFullName = function () {
 	return `${this.name} ${this.surname}`;
 };
