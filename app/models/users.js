@@ -60,7 +60,7 @@ UserSchema.statics.ORIGIN_EMAIL = ORIGIN.EMAIL;
 UserSchema.statics.ORIGIN_GOOGLE = ORIGIN.GOOGLE;
 
 UserSchema.statics.isUsernameTaken = async function (username) {
-	const user = await this.find({ username });
+	const user = await this.findOne({ username });
 	if (user) { return true }
 	return false;
 }
