@@ -1,5 +1,5 @@
 const queryString = require("query-string");
-var redirect_uri = "http://localhost:8088/google/callback";
+var redirect_uri = `${process.env.API_URL}/google/callback`;
 var crypto = require("crypto");
 
 const tagLabel = "google-login-controller";
