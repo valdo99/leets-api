@@ -58,10 +58,11 @@ new utilities.express.Service(tagLabel)
 		});
 
 		if (user && user.origin === Users.ORIGIN_EMAIL) {
-			return res.resolve(
-				queryString.stringify({
+			return res.redirect(
+				`${process.env.APP_URL}?${queryString.stringify({
 					error: i18n.__("USER_DIFFERENT_ORIGIN"),
-				}),
+				})}`
+
 			);
 		}
 
