@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-const Users = mongoose.model("User");
+const Users = require("../models/users")
 const httpContext = require("express-http-context");
 const jwt = require("jsonwebtoken");
 

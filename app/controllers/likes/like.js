@@ -27,6 +27,8 @@ new utilities.express.Service(tagLabel)
 				},
 				event: "post-like",
 			});
+			const agenda = utilities.dependencyLocator.get("agenda");
+			await agenda.schedule("in 5 seconds", "send like notification", { like });
 		} catch (error) {
 			utilities.logger.error("DUPLICATE INDEX LIKE", {
 				user: req.locals.user._id,
@@ -35,4 +37,6 @@ new utilities.express.Service(tagLabel)
 		}
 
 		res.resolve();
+
+
 	});
