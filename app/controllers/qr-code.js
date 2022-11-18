@@ -5,5 +5,5 @@ new utilities.express.Service(tagLabel)
     .isPublic()
     .respondsAt("/qr-code")
     .controller(async (req, res) => {
-        return res.redirect("https://leets.it/utm_source=qr-code");
+        return res.redirect("https://leets.it?utm_source=qr-code");
     });
