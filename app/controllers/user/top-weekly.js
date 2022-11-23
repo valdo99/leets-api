@@ -104,11 +104,11 @@ new utilities.express.Service(tagLabel)
                                         {
                                             $gte: [
                                                 "$createdAt",
-                                                new Date(moment("10-10-2022", "DD-MM-YYYY").startOf("day")),
+                                                new Date(moment("06-11-2022", "DD-MM-YYYY").startOf("day")),
                                             ],
                                         },
                                         {
-                                            $lte: ["$createdAt", new Date(moment("23-10-2022", "DD-MM-YYYY").endOf("day"))],
+                                            $lte: ["$createdAt", new Date(moment("20-11-2022", "DD-MM-YYYY").endOf("day"))],
                                         },
                                     ],
                                 },
