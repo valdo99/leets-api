@@ -17,9 +17,9 @@ new utilities.express.Service(tagLabel)
 
 
         if (!post) {
-            return res.resolve(false);
+            return res.resolve({ isLiked: false });
         }
 
-        return res.resolve(true);
+        return res.resolve({ isLiked: true });
 
     });
