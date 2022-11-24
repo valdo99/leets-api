@@ -68,6 +68,7 @@ PostSchema.plugin(publicFields, [
 	"users",
 	"preview_url",
 	"isLiked",
+	"playcount"
 ]);
 
 PostSchema.plugin(mongooseErrors);
