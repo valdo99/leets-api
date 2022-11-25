@@ -54,6 +54,8 @@ PostSchema.statics.STATUS_UPLOADED = STATUS_UPLOADED;
 PostSchema.statics.STATUS_ONLINE = STATUS_ONLINE;
 // creare post findOne e inserire all'interno il numero totale dei like
 
+PostSchema.index({ title: "text" });
+
 PostSchema.plugin(publicFields, [
 	"_id",
 	"title",
