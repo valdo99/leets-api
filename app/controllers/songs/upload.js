@@ -57,7 +57,7 @@ new utilities.express.Service(tagLabel)
 		const mailer = new Mailer();
 		await mailer
 			.setTemplate(api.config.email.templates.songUploaded)
-			.to(req.locals.user.name, req.locals.user.email)
+			.to(req.locals.user.username, req.locals.user.email)
 			.setParams({
 				image: post.image,
 				title: post.title,

@@ -69,29 +69,13 @@ new utilities.express.Service(tagLabel)
 
 		res.resolve(user);
 
-		const posthog = utilities.dependencyLocator.get("posthog");
-
-		posthog.identify({
-			distinctId: user._id,
-			properties: {
-				name: user.name,
-				surname: user.surname,
-				username: user.username,
-				createdAt: user.createdAt,
-			},
-		});
-
-		posthog.capture({
-			distinctId: user._id,
-			event: "sign-up",
-		});
 
 		const mailer = new Mailer();
 		await mailer
 			.setTemplate(api.config.email.templates.verification)
-			.to(user.name, user.email)
+			.to(user.username, user.email)
 			.setParams({
-				name: user.getFullName(),
+				name: user.username,
 				link: `${process.env.API_URL}/auth/confirm-email?email=${user.email}&otp=${user.emailConfirmation.otp}`,
 			})
 			.send();

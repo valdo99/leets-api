@@ -15,15 +15,9 @@ const UserSchema = new mongoose.Schema(
 	{
 		name: {
 			type: String,
-			required: [true, i18n.__("FIELD_REQUIRED")],
-			minLength: [1, i18n.__("STRING_AT_LEAST", { min: 1 })],
-			maxLength: [50, i18n.__("STRING_AT_MUST", { max: 50 })],
 		},
 		surname: {
 			type: String,
-			required: [true, i18n.__("FIELD_REQUIRED")],
-			minLength: [1, i18n.__("STRING_AT_LEAST", { min: 1 })],
-			maxLength: [50, i18n.__("STRING_AT_MUST", { max: 50 })],
 		},
 		email: {
 			type: String,
@@ -65,9 +59,6 @@ UserSchema.statics.isUsernameTaken = async function (username) {
 	return false;
 }
 
-UserSchema.methods.getFullName = function () {
-	return `${this.name} ${this.surname}`;
-};
 
 UserSchema.plugin(publicFields, [
 	"_id",

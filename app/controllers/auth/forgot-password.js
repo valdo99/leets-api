@@ -35,9 +35,9 @@ new utilities.express.Service(tagLabel)
 		const mailer = new Mailer();
 		await mailer
 			.setTemplate(api.config.email.templates.lostPassword)
-			.to(user.name, user.email)
+			.to(user.username, user.email)
 			.setParams({
-				name: user.getFullName(),
+				name: user.username,
 				OTP: user.resetPassword.otp,
 				link: `${process.env.APP_URL}/reset-password?email=${user.email}&OTP=${user.resetPassword.otp}`,
 			})

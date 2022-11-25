@@ -52,9 +52,9 @@ new utilities.express.Service(tagLabel)
 		const mailer = new Mailer();
 		await mailer
 			.setTemplate(api.config.email.templates.verification)
-			.to(user.name, user.email)
+			.to(user.username, user.email)
 			.setParams({
-				name: user.getFullName(),
+				name: user.username,
 				OTP: user.emailConfirmation.otp,
 				link: `${process.env.APP_URL}/signup?confirmEmail=1&email=${user.email}`,
 			})

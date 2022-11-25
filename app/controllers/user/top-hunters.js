@@ -110,9 +110,7 @@ new utilities.express.Service(tagLabel)
 			},
 			{
 				$project: {
-					name: "$_id.name",
 					points: "$points",
-					surname: "$_id.surname",
 					username: "$_id.username",
 					createdAt: "$_id.createdAt",
 					_id: 0,
