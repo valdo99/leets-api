@@ -13,7 +13,7 @@ new utilities.express.Service(tagLabel)
     .controller(async (req, res) => {
         await authPublicRoute.setContext(req);
 
-        const post = await Likes.findOne({ post: req.params.id, user: req.locals.user._id });
+        const post = await Likes.findOne({ post: req.params.id, user: req.locals.user ? req.locals.user._id : "" });
 
 
         if (!post) {
