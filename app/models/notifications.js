@@ -58,6 +58,7 @@ NotificationSchema.plugin(publicFields, [
     "asste_type",
     "asset",
     "user_from",
+    "status",
 ]);
 
 module.exports = exports = mongoose.model("Notifications", NotificationSchema);
