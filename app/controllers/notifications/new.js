@@ -17,5 +17,5 @@ new utilities.express.Service(tagLabel)
         const notifications = await Notifications.countDocuments(query)
 
 
-        return res.resolve(notifications);
+        return res.resolve(notifications.toString());
     });
