@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
-const Post = mongoose.model("Post");
 const Like = mongoose.model("Like");
+const Notifications = mongoose.model("Notifications");
+
 const tagLabel = "dislikePostProtectedController";
 
 new utilities.express.Service(tagLabel)
@@ -9,7 +10,17 @@ new utilities.express.Service(tagLabel)
 	.controller(async (req, res) => {
 		const { id } = req.params;
 
-		await Like.findOneAndDelete({ post: id, user: req.locals.user._id });
+		const like = await Like.findOne({ post: id, user: req.locals.user._id });
+
+		if (like) {
+			await Notifications.findOneAndDelete({
+				asset_type: Notifications.ASSETNOTIFICATION.LIKE,
+				asset: like._id,
+				user_from: req.locals.user._id,
+
+			});
+			await like.delete();
+		}
 
 		res.resolve();
 	});

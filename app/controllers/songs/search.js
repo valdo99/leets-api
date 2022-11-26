@@ -9,7 +9,7 @@ const PER_PAGE = 7
 new utilities.express.Service(tagLabel)
     .isGet()
     .isPublic()
-    .respondsAt("/search/songs")
+    .respondsAt("/posts/search")
     .controller(async (req, res) => {
 
         const searchQuery = req.query.query;

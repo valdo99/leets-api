@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const Post = mongoose.model("Post");
 const Like = mongoose.model("Like");
 const tagLabel = "likePostProtectedController";
+const Notifications = mongoose.model("Notifications");
+
 
 new utilities.express.Service(tagLabel)
 	.isPost()
@@ -20,15 +22,17 @@ new utilities.express.Service(tagLabel)
 
 		try {
 			await like.save();
-			utilities.dependencyLocator.get("posthog").capture({
-				distinctId: req.locals.user._is,
-				properties: {
-					postTitle: post.title,
-				},
-				event: "post-like",
-			});
-			const agenda = utilities.dependencyLocator.get("agenda");
-			await agenda.schedule("in 5 seconds", "send like notification", { like });
+
+			if (post.hunter.toString() !== req.locals.user._id.toString()) {
+				await Notifications.create({
+					asset_type: Notifications.ASSETNOTIFICATION.LIKE,
+					user: post.hunter,
+					asset: like._id,
+					user_from: req.locals.user._id,
+				});
+			}
+
+
 		} catch (error) {
 			utilities.logger.error("DUPLICATE INDEX LIKE", {
 				user: req.locals.user._id,

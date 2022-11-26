@@ -17,13 +17,23 @@ new utilities.express.Service(tagLabel)
         };
 
         const notifications = await Notifications.find(query)
-            .sort({ createdAt: -1, status: -1 })
+            .sort({ createdAt: -1, status: 0 })
             .skip(page * PER_PAGE)
-            .limit(PER_PAGE);
+            .limit(PER_PAGE)
+            .populate([{
+                path: "asset",
+                select: "-__v -user -updatedAt",
+                populate: {
+                    path: "post",
+                    select: "title _id image createdAt"
+                }
+            }, {
+                path: "user_from",
+                select: "username _id"
+            }]);
 
         res.setPagination({
             total: await Notifications.countDocuments(query),
-            unseen: await Notifications.countDocuments({ ...query, status: Notifications.SENT_STATUS }),
             perPage: PER_PAGE,
             page,
         });
