@@ -20,8 +20,15 @@ new utilities.express.Service(tagLabel)
         let perPage = parseInt(req.query.perPage);
         if (isNaN(perPage) || perPage > 30 || perPage < 1) { perPage = PER_PAGE; }
 
+        let query = {};
 
-        const query = { title: { '$regex': searchQuery, '$options': 'i' } };
+        if (!searchQuery || searchQuery === "") {
+            query = { title: searchQuery };
+        } else {
+            query = { title: { '$regex': searchQuery, '$options': 'i' } };
+
+        }
+
 
         const post = await Post.find(query)
             .skip(page * perPage)
