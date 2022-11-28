@@ -1,9 +1,38 @@
+const moment = require("moment");
 const mongoose = require("mongoose");
 const Post = mongoose.model("Post");
+const Likes = mongoose.model("Like");
 const tagLabel = "search-song-controller";
 
+const _ = require('lodash');
 
-const PER_PAGE = 7
+const getPublicFields = (data) => {
+    fields = [
+        "_id",
+        "title",
+        "spotify_id",
+        "hunter",
+        "artist",
+        "image",
+        "followers",
+        "likes",
+        "score",
+        "likers",
+        "users",
+        "preview_url",
+        "isLiked",
+        "playcount",
+        "createdAt",
+        "updatedAt"
+    ];
+    return _.pick(data, fields);
+};
+
+
+const PER_PAGE = 10;
+
+const authPublicRoute = utilities.dependencyLocator.get("authPublicRoute");
+
 
 
 new utilities.express.Service(tagLabel)
@@ -11,8 +40,10 @@ new utilities.express.Service(tagLabel)
     .isPublic()
     .respondsAt("/posts/search")
     .controller(async (req, res) => {
+        await authPublicRoute.setContext(req);
 
         const searchQuery = req.query.query;
+        const { date = new Date() } = req.query;
 
         let page = parseInt(req.query.page);
         if (isNaN(page)) { page = 0; }
@@ -36,12 +67,25 @@ new utilities.express.Service(tagLabel)
             .populate([{
                 path: "artist",
                 model: "Artist",
+                select: "name image monthlyListeners createdAt updatedAt _id",
             }, {
                 path: "hunter",
                 model: "User",
                 select: "username _id  name surname createdAt updatedAt"
             }
             ]);
+
+        let posts = [];
+        // async for loop javascript
+        for (const p of post) {
+            const isLiked = await Likes.findOne({ post: p._id, user: req.locals?.user?._id });
+            const likes = await Likes.countDocuments({ post: p._id });
+            const copyP = getPublicFields(p);
+            copyP.isLiked = isLiked ? true : false;
+            copyP.likes = likes;
+            copyP.partialLikes = likes;
+            posts.push(copyP);
+        }
 
 
         res.setPagination({
@@ -50,6 +94,6 @@ new utilities.express.Service(tagLabel)
             page,
         });
 
-        return res.resolve(post);
+        return res.resolve(posts);
 
     });
