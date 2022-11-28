@@ -39,6 +39,7 @@ new utilities.express.Service(tagLabel)
             }, {
                 path: "hunter",
                 model: "User",
+                select: "username _id  name surname createdAt updatedAt"
             }
             ]);
 
