@@ -33,15 +33,12 @@ new utilities.express.Service(tagLabel)
         const post = await Post.find(query)
             .skip(page * perPage)
             .limit(perPage)
-            .select("title hunter artist image")
             .populate([{
                 path: "artist",
                 model: "Artist",
-                select: "_id name image",
             }, {
                 path: "hunter",
                 model: "User",
-                select: "_id name surname username"
             }
             ]);
 
