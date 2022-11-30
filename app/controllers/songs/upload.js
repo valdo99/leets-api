@@ -54,16 +54,16 @@ new utilities.express.Service(tagLabel)
 			return res.resolve(post);
 		}
 
-		const mailer = new Mailer();
-		await mailer
-			.setTemplate(api.config.email.templates.songUploaded)
-			.to(req.locals.user.username, req.locals.user.email)
-			.setParams({
-				image: post.image,
-				title: post.title,
-				author: post.artist.name,
-			})
-			.send();
+		// const mailer = new Mailer();
+		// await mailer
+		// 	.setTemplate(api.config.email.templates.songUploaded)
+		// 	.to(req.locals.user.username, req.locals.user.email)
+		// 	.setParams({
+		// 		image: post.image,
+		// 		title: post.title,
+		// 		author: post.artist.name,
+		// 	})
+		// 	.send();
 
 		res.resolve(post);
 	});

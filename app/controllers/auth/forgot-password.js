@@ -13,11 +13,17 @@ new utilities.express.Service(tagLabel)
 
 		if (!email) { return res.forbidden(i18n.__("EMAIL_MISSING")); }
 
+
 		const user = await Users.findOne({
 			email: req.body.email.toLowerCase(),
 		}).select("+resetPassword.otp +resetPassword.validTill");
 
+
 		if (!user) { return res.forbidden(i18n.__("USER_NOT_FOUND")); }
+
+		if (user.origin !== Users.ORIGIN_EMAIL) {
+			return res.forbidden(i18n.__("USER_DIFFERENT_ORIGIN"));
+		}
 
 		if (user.resetPassword && user.resetPassword.validTill > new Date()) {
 			return res.forbidden(i18n.__("EXISTENT_RESET_PASSWORD_PROCESS"));
@@ -27,10 +33,6 @@ new utilities.express.Service(tagLabel)
 
 		await user.save();
 
-		utilities.dependencyLocator.get("posthog").capture({
-			distinctId: user._id,
-			event: "forgot-password",
-		});
 
 		const mailer = new Mailer();
 		await mailer

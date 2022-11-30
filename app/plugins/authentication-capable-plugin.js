@@ -10,7 +10,7 @@ const ROUNDS = 10;
 
 const PASSWORD_REGEX =
 	"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$";
-const resetPasswordProcessDuration = 15 * 60;
+const resetPasswordProcessDuration = 3 * 60;
 
 const otp = require("../utils/otp");
 
@@ -90,8 +90,7 @@ module.exports = (schema, options = {}) => {
 		};
 
 		return {
-			createdAt: this.resetPassword.createdAt,
-			validTill: this.resetPassword.validTill,
+			duration: resetPasswordProcessDuration
 		};
 	};
 };
