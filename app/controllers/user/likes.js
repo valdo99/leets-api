@@ -117,7 +117,6 @@ new utilities.express.Service(tagLabel)
 			},
 			{
 				$sort: {
-					likes: -1,
 					createdAt: -1,
 				},
 			},

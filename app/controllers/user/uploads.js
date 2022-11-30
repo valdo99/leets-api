@@ -115,6 +115,7 @@ new utilities.express.Service(tagLabel)
 					},
 				},
 			},
+
 			{
 				$lookup: {
 					from: "artists",
@@ -133,6 +134,11 @@ new utilities.express.Service(tagLabel)
 					"artist.__v": 0,
 				},
 			},
+			{
+				$sort: {
+					createdAt: -1,
+				},
+			}
 		];
 
 		if (!user) {
