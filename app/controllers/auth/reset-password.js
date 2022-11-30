@@ -51,6 +51,12 @@ new utilities.express.Service(tagLabel)
 			);
 		}
 
+		if (!user.isPasswordCompliant(password)) {
+			return res.badRequest({
+				password: i18n.__("FORM_PASSWORD_IS_WEAK"),
+			});
+		}
+
 		await user.setPassword(password);
 
 		await user.save();
