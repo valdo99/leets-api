@@ -43,7 +43,7 @@ new utilities.express.Service(tagLabel)
 			surname,
 			email,
 			username: replaceAll(username.toLowerCase().trim(), " ", ""),
-			referral
+			referral: referral ? mongoose.Types.ObjectId(referral) : null,
 		});
 
 		if (!(await user.isPasswordCompliant(password))) {
