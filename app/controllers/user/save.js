@@ -16,7 +16,7 @@ new utilities.express.Service(tagLabel)
 	.isPublic()
 	.respondsAt("/users")
 	.controller(async (req, res) => {
-		const { name, surname, email, username, password, repeatPassword, terms } =
+		const { name, surname, email, username, password, repeatPassword, terms, referral } =
 			req.body;
 
 		if (terms !== true) {
@@ -43,6 +43,7 @@ new utilities.express.Service(tagLabel)
 			surname,
 			email,
 			username: replaceAll(username.toLowerCase().trim(), " ", ""),
+			referral
 		});
 
 		if (!(await user.isPasswordCompliant(password))) {

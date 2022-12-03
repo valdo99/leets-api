@@ -42,6 +42,10 @@ const UserSchema = new mongoose.Schema(
 			enum: [ORIGIN.EMAIL, ORIGIN.GOOGLE],
 			default: ORIGIN.EMAIL,
 		},
+		referral: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+		}
 	},
 	{
 		collection: "users",
