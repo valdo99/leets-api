@@ -17,7 +17,8 @@ new utilities.express.Service(tagLabel)
 			return res.notFound(i18n.__("USER_NOT_FOUND"));
 		}
 
-		if (referral && mongoose.isObjectIdOrHexString(referral)) {
+
+		if (!user.referral && referral && user.referral && mongoose.isObjectIdOrHexString(referral)) {
 			user.referral = referral;
 			await user.save();
 		}
