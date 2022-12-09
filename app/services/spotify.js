@@ -31,7 +31,7 @@ utilities.dependencyLocator.register(
 	(() => {
 		const getArtist = async (artist) => {
 			const res = await axios({
-				url: `https://api-partner.spotify.com/pathfinder/v1/query?operationName=queryArtistOverview&variables={"uri":"spotify:artist:${artist}"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"bc00d8721c7aca91d3507c01a3e3dcca448a6582c51f7fc64a48c491b4369ad1"}}`,
+				url: `https://api-partner.spotify.com/pathfinder/v1/query?operationName=queryArtistOverview&variables={"uri":"spotify:artist:${artist}"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"0b84fdc8c874d3020a119be614b8f0ee0f08c69c1c37aeb0a8b17758f63ef7fe"}}`,
 				headers: await headers(),
 			});
 			return res.data.data.artist;
@@ -39,7 +39,7 @@ utilities.dependencyLocator.register(
 
 		const getTrack = async (track) => {
 			const res = await axios({
-				url: `https://api-partner.spotify.com/pathfinder/v1/query?operationName=getTrack&variables={"uri":"spotify:track:${track}"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"f9c8447cac06d3c6d6f4c9e4ef7e848a837a7b4eb582e35efc484654abaeb472"}}`,
+				url: `https://api-partner.spotify.com/pathfinder/v1/query?operationName=getTrack&variables={"uri":"spotify:track:${track}"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"6af75b996d93636e4f1980c170f1171a457bf936f47d6ee1e38f57671d3ae7bd"}}`,
 				headers: await headers(),
 			});
 			return res.data.data;
