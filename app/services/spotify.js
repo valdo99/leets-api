@@ -23,6 +23,7 @@ const headers = async () => {
 const getToken = async () => {
 	const spotyHTML = await axios.get("https://open.spotify.com");
 	const token = spotyHTML.data.split('"accessToken":"')[1].split('"')[0];
+	console.log(token);
 	return token;
 };
 
