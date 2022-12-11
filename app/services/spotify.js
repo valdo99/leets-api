@@ -37,7 +37,9 @@ utilities.dependencyLocator.register(
 					url: `https://api-partner.spotify.com/pathfinder/v1/query?operationName=queryArtistOverview&variables={"uri":"spotify:artist:${artist}"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"0b84fdc8c874d3020a119be614b8f0ee0f08c69c1c37aeb0a8b17758f63ef7fe"}}`,
 					headers: await headers(),
 				});
-				console.log(res);
+				console.log(res.data);
+
+				console.log(res.data.errors);
 				return res.data.data.artist;
 			} catch (error) {
 				console.log(error);
