@@ -21,17 +21,10 @@ const headers = async () => {
 };
 
 const getToken = async () => {
-	try {
-		const spotyHTML = await axios.get("https://open.spotify.com");
-		console.log('token', spotyHTML);
+	const spotyHTML = await axios.get("https://open.spotify.com");
+	const token = spotyHTML.data.split('"accessToken":"')[1].split('"')[0];
+	return token;
 
-		const token = spotyHTML.data.split('"accessToken":"')[1].split('"')[0];
-		console.log(`token: ${token}`);
-		return token;
-	} catch (error) {
-		console.log('ERROR HERE');
-		return 'kkk'
-	}
 
 };
 
@@ -39,11 +32,17 @@ utilities.dependencyLocator.register(
 	tagLabel,
 	(() => {
 		const getArtist = async (artist) => {
-			const res = await axios({
-				url: `https://api-partner.spotify.com/pathfinder/v1/query?operationName=queryArtistOverview&variables={"uri":"spotify:artist:${artist}"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"0b84fdc8c874d3020a119be614b8f0ee0f08c69c1c37aeb0a8b17758f63ef7fe"}}`,
-				headers: await headers(),
-			});
-			return res.data.data.artist;
+			try {
+				const res = await axios({
+					url: `https://api-partner.spotify.com/pathfinder/v1/query?operationName=queryArtistOverview&variables={"uri":"spotify:artist:${artist}"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"0b84fdc8c874d3020a119be614b8f0ee0f08c69c1c37aeb0a8b17758f63ef7fe"}}`,
+					headers: await headers(),
+				});
+				return res.data.data.artist;
+			} catch (error) {
+				console.log(error);
+				throw error;
+			}
+
 		};
 
 		const getTrack = async (track) => {
